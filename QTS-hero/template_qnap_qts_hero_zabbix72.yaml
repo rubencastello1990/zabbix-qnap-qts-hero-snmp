@@ -597,7 +597,7 @@ zabbix_export:
         tags:
         - tag: component
           value: storage
-      - uuid: a1e4c8d2f5b34710983c2e6a7d1f4b89
+      - uuid: c72bbda1e3744106b178640cedff0c45
         name: 'Disk [Slot {#SNMPINDEX}]: Model'
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.4.{#SNMPINDEX}
@@ -609,7 +609,7 @@ zabbix_export:
         tags:
         - tag: component
           value: disk
-      - uuid: b3f7e1d9c4a254860e7a1d3b8c2f5e09
+      - uuid: b7c6ed74133a4418baaec208fd2f501f
         name: 'Disk [Slot {#SNMPINDEX}]: Serial number'
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.5.{#SNMPINDEX}
@@ -620,7 +620,7 @@ zabbix_export:
         description: Numero de serie del disco fisico (diskSerialNumber col5, OCTET
           STRING).
       trigger_prototypes:
-      - uuid: c6a2b4d8e1f34c97a5b8d2e9f3c7a102
+      - uuid: be879d1a0d77498a8cf50afecef2c359
         name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Critical state - Error (S/N:
           {#DISKSERIALNUMBER})'
         expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Error")=1
@@ -630,7 +630,7 @@ zabbix_export:
         tags:
         - tag: component
           value: storage
-      - uuid: d9e5c3b1f7a264850c1e4b7d9a8f2e13
+      - uuid: 181ea166db7e44978248692f2e7f5e2d
         name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Faulty/Warning state (S/N:
           {#DISKSERIALNUMBER})'
         expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Warning|Faulty")=1
