@@ -597,18 +597,67 @@ zabbix_export:
         tags:
         - tag: component
           value: storage
+      - uuid: a1e4c8d2f5b34710983c2e6a7d1f4b89
+        name: 'Disk [Slot {#SNMPINDEX}]: Model'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.4.{#SNMPINDEX}
+        key: disk.model[{#SNMPINDEX}]
+        delay: 1h
+        history: 7d
+        value_type: CHAR
+        description: Modelo del disco fisico (diskModel col4, OCTET STRING).
+        tags:
+        - tag: component
+          value: disk
+      - uuid: b3f7e1d9c4a254860e7a1d3b8c2f5e09
+        name: 'Disk [Slot {#SNMPINDEX}]: Serial number'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.5.{#SNMPINDEX}
+        key: disk.serial[{#SNMPINDEX}]
+        delay: 1h
+        history: 7d
+        value_type: CHAR
+        description: Numero de serie del disco fisico (diskSerialNumber col5, OCTET
+          STRING).
       trigger_prototypes:
+      - uuid: c6a2b4d8e1f34c97a5b8d2e9f3c7a102
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Critical state - Error (S/N:
+          {#DISKSERIALNUMBER})'
+        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Error")=1
+        priority: DISASTER
+        description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) reporta estado
+          Error. Reemplazar el disco inmediatamente o revisar RAID.'
+        tags:
+        - tag: component
+          value: storage
+      - uuid: d9e5c3b1f7a264850c1e4b7d9a8f2e13
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Faulty/Warning state (S/N:
+          {#DISKSERIALNUMBER})'
+        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Warning|Faulty")=1
+        priority: HIGH
+        description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) reporta estado
+          Warning o Faulty. Revisar SMART y logs del NAS.'
+        tags:
+        - tag: component
+          value: storage
       - uuid: 7650dcfbfd3f4883bab73ae2f95c4c6b
         name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Status is not Ready (S/N:
           {#DISKSERIALNUMBER})'
         expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^(Ready|Standby)$")=0
           and length(last(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}]))>0
-        priority: HIGH
+        priority: AVERAGE
         description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) no esta en
           estado Ready.'
         tags:
         - tag: component
           value: storage
+        dependencies:
+        - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Critical state - Error (S/N:
+            {#DISKSERIALNUMBER})'
+          expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Error")=1
+        - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Faulty/Warning state (S/N:
+            {#DISKSERIALNUMBER})'
+          expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Warning|Faulty")=1
       - uuid: 29593dc2556d4376b3491e04c479b41a
         name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C
           for 15m)'
@@ -627,8 +676,8 @@ zabbix_export:
         description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_WARN}C durante
           15m.
         dependencies:
-        - name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C
-            for 15m)'
+        - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature is too high
+            (>{$HDD_TEMP_HIGH}C for 15m)'
           expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}
         tags:
         - tag: component
