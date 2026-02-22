@@ -1,10 +1,10 @@
 zabbix_export:
   version: '7.2'
   template_groups:
-    - uuid: '00000000000040008000000000000001'
+    - uuid: '11dcb1f3944a421ea7acdc5cea89ff73'
       name: 'Templates/Storage devices'
   templates:
-    - uuid: '00000000000040008000000000000002'
+    - uuid: 'b8d993fd7bc54c27961f6f19f2c51a63'
       template: 'QNAP QTS hero by SNMP'
       name: 'QNAP QTS hero by SNMP'
       description: |
@@ -100,14 +100,14 @@ zabbix_export:
           value: CHANGE_IF_NEEDED
           description: 'Expresión regular para excluir interfaces de red del LLD (ej. lo|dummy)'
       valuemaps:
-        - uuid: '00000000000040008001000000000001'
+        - uuid: 'b970ff38cb124fe784f1228937a40161'
           name: 'QNAP Power Status'
           mappings:
             - value: '-1'
               newvalue: Failed
             - value: '0'
               newvalue: OK
-        - uuid: '00000000000040008001000000000002'
+        - uuid: '87642f50dbf8426cabfa0891a6062052'
           name: 'QNAP Storage Pool Status'
           mappings:
             - value: '-6'
@@ -148,7 +148,7 @@ zabbix_export:
               newvalue: Pruning
             - value: '14'
               newvalue: Tuning
-        - uuid: '00000000000040008001000000000003'
+        - uuid: 'f1b7a0cddbdd4604b9eb8e83b2b2b677'
           name: 'QNAP LUN Status'
           mappings:
             - value: '-1'
@@ -157,7 +157,7 @@ zabbix_export:
               newvalue: Disconnected
             - value: '1'
               newvalue: Connected
-        - uuid: '00000000000040008001000000000004'
+        - uuid: 'a797e67ecd8b49518beb4571c599a0d7'
           name: 'QNAP Target Status'
           mappings:
             - value: '-1'
@@ -166,7 +166,7 @@ zabbix_export:
               newvalue: Ready
             - value: '1'
               newvalue: Connected
-        - uuid: '00000000000040008001000000000005'
+        - uuid: '9aa72ba777284c8fb775bcb75a502e2e'
           name: 'QNAP SMART Status'
           mappings:
             - value: '-1'
@@ -177,7 +177,7 @@ zabbix_export:
               newvalue: Warning
             - value: '2'
               newvalue: Abnormal
-        - uuid: '00000000000040008001000000000006'
+        - uuid: '4a1c0279842d401da4d5a6db6775e3a1'
           name: 'QNAP Cache Type'
           mappings:
             - value: '0'
@@ -186,14 +186,14 @@ zabbix_export:
               newvalue: 'Read-write'
             - value: '2'
               newvalue: 'Write-only'
-        - uuid: '00000000000040008001000000000007'
+        - uuid: 'd2ac1d72a51e4384bcdd107401a58147'
           name: 'QNAP Firmware Update'
           mappings:
             - value: '0'
               newvalue: 'Up to date'
             - value: '1'
               newvalue: 'Update available'
-        - uuid: '00000000000040008001000000000008'
+        - uuid: 'a871ce01365c4e17b100cebfaf912f2a'
           name: 'QNAP WORM Status'
           mappings:
             - value: '0'
@@ -202,7 +202,7 @@ zabbix_export:
               newvalue: Enterprise
             - value: '2'
               newvalue: Compliance
-        - uuid: '00000000000040008001000000000009'
+        - uuid: '670eff7db54c4ae99225cb47c49d214e'
           name: 'QNAP mSATA SMART'
           mappings:
             - value: '-1'
@@ -213,7 +213,7 @@ zabbix_export:
               newvalue: Warning
             - value: '2'
               newvalue: Abnormal
-        - uuid: '00000000000040008001000000000010'
+        - uuid: 'f09bc3ce96ca4ea2bd83ff590f650c7d'
           name: 'QNAP JBOD Disk Status'
           mappings:
             - value: '-9'
@@ -230,7 +230,7 @@ zabbix_export:
         # ---------------------------------------------------------------
         # SISTEMA
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008002000000000001'
+        - uuid: '35a32f03be264b898fc1e38fef83b58d'
           name: 'System: Uptime'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.2.1.1.3.0'
@@ -248,7 +248,7 @@ zabbix_export:
             - tag: component
               value: system
           triggers:
-            - uuid: '00000000000040008006000000000001'
+            - uuid: '063b6e6ad25d46ca982d742ab5586aa7'
               name: 'SNMP: No response from host'
               expression: 'nodata(/QNAP QTS hero by SNMP/system.uptime,{$SNMP.TIMEOUT})=1'
               priority: DISASTER
@@ -257,7 +257,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: health
-            - uuid: '00000000000040008006000000000002'
+            - uuid: '3d1f856f6ba64c879769bb9d548882ed'
               name: 'System: Device has been restarted (uptime < 10m)'
               expression: 'last(/QNAP QTS hero by SNMP/system.uptime)<10m'
               priority: WARNING
@@ -266,7 +266,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: system
-        - uuid: '00000000000040008002000000000002'
+        - uuid: '39470e24f4b14ef5a2c4f2b02823aa84'
           name: 'System: Model'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.3.0'
@@ -279,7 +279,7 @@ zabbix_export:
           tags:
             - tag: component
               value: system
-        - uuid: '00000000000040008002000000000003'
+        - uuid: '2bb0e0edd21145c1a48ec25bb56752e8'
           name: 'System: Hostname'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.4.0'
@@ -292,7 +292,7 @@ zabbix_export:
           tags:
             - tag: component
               value: system
-        - uuid: '00000000000040008002000000000004'
+        - uuid: 'd24be2cad58c40d4a8166bdf41b12f1e'
           name: 'System: Serial number'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.5.0'
@@ -305,7 +305,7 @@ zabbix_export:
           tags:
             - tag: component
               value: system
-        - uuid: '00000000000040008002000000000005'
+        - uuid: '0e30b47246674d72ab58a3051b977db4'
           name: 'System: Firmware version'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.6.0'
@@ -318,7 +318,7 @@ zabbix_export:
           tags:
             - tag: component
               value: system
-        - uuid: '00000000000040008002000000000006'
+        - uuid: '72a6773f825f4623a052adb967eaaa5f'
           name: 'System: Firmware update available'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.7.0'
@@ -334,7 +334,7 @@ zabbix_export:
             - tag: component
               value: system
           triggers:
-            - uuid: '00000000000040008006000000000003'
+            - uuid: '138f0988da694bb2a35db7ca2d182805'
               name: 'System: Firmware update available'
               expression: 'last(/QNAP QTS hero by SNMP/system.firmware.update)=1'
               priority: INFO
@@ -343,7 +343,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: system
-        - uuid: '00000000000040008002000000000007'
+        - uuid: '6aa9cc9dcea9462ea4aa05a77a4ae354'
           name: 'CPU: Temperature'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.10.0'
@@ -357,7 +357,7 @@ zabbix_export:
             - tag: component
               value: cpu
           triggers:
-            - uuid: '00000000000040008006000000000005'
+            - uuid: '0ff7eaff88304078bab7f5722ec55619'
               name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}°C for 15m)'
               expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}'
               priority: HIGH
@@ -365,7 +365,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: cpu
-            - uuid: '00000000000040008006000000000006'
+            - uuid: 'aca5eea09cde4a26ac48bf2e9d105f31'
               name: 'CPU: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
               expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_WARN}'
               priority: WARNING
@@ -376,7 +376,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: cpu
-        - uuid: '00000000000040008002000000000008'
+        - uuid: 'dada6963370849c3b670ac6b74c3dfd7'
           name: 'System: Temperature'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.11.0'
@@ -390,7 +390,7 @@ zabbix_export:
             - tag: component
               value: system
           triggers:
-            - uuid: '00000000000040008006000000000007'
+            - uuid: 'e6d6d60de1c245cbb12ffd93b6836987'
               name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}°C for 15m)'
               expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}'
               priority: HIGH
@@ -398,7 +398,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: system
-            - uuid: '00000000000040008006000000000008'
+            - uuid: '0c7513cc064e4e60a6cb1ddd6f93dc36'
               name: 'System: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
               expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_WARN}'
               priority: WARNING
@@ -409,7 +409,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: system
-        - uuid: '00000000000040008002000000000009'
+        - uuid: '55ef5cdcdb5b4799b1b57b5a55a5c9e1'
           name: 'CPU: Utilization'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.12.0'
@@ -422,7 +422,7 @@ zabbix_export:
           tags:
             - tag: component
               value: cpu
-        - uuid: '00000000000040008002000000000010'
+        - uuid: 'a4f11b2aa6e946ed855bc6e0513f2853'
           name: 'Memory: Total'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.13.0'
@@ -439,7 +439,7 @@ zabbix_export:
           tags:
             - tag: component
               value: memory
-        - uuid: '00000000000040008002000000000011'
+        - uuid: 'f84fa526e0b848bcbe89f479a688a29e'
           name: 'Memory: Used'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.16.0'
@@ -456,7 +456,7 @@ zabbix_export:
           tags:
             - tag: component
               value: memory
-        - uuid: '00000000000040008002000000000012'
+        - uuid: '25298b17429640f185be373b3932a643'
           name: 'Memory: Utilization'
           type: CALCULATED
           key: vm.memory.util
@@ -470,7 +470,7 @@ zabbix_export:
             - tag: component
               value: memory
           triggers:
-            - uuid: '00000000000040008006000000000010'
+            - uuid: '5fa1c761dd0c45b9bcc115e42019ffe1'
               name: 'Memory: High utilization (>90% for 15m)'
               expression: 'avg(/QNAP QTS hero by SNMP/vm.memory.util,15m)>90'
               priority: WARNING
@@ -478,7 +478,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: memory
-        - uuid: '00000000000040008002000000000013'
+        - uuid: '780c6427f26441e19b6bcc4f87f7a1da'
           name: 'System: Power status'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.19.0'
@@ -494,7 +494,7 @@ zabbix_export:
             - tag: component
               value: power
           triggers:
-            - uuid: '00000000000040008006000000000004'
+            - uuid: '2d6982571b544d75bc90590a89b2e61c'
               name: 'System: Power failure detected'
               expression: 'last(/QNAP QTS hero by SNMP/system.power.status)=-1'
               priority: HIGH
@@ -502,7 +502,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: power
-        - uuid: '00000000000040008002000000000014'
+        - uuid: 'd658c63d80ee4884941d69eb46fc43b7'
           name: 'System: UPS status code'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.12.20.0'
@@ -517,7 +517,7 @@ zabbix_export:
         # ---------------------------------------------------------------
         # UPS EXTERNO
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008002000000000015'
+        - uuid: '9684edca083247f9bc6fccbe8d3edf16'
           name: 'UPS: Status'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.13.1.0'
@@ -530,7 +530,7 @@ zabbix_export:
           tags:
             - tag: component
               value: ups
-        - uuid: '00000000000040008002000000000016'
+        - uuid: '5791355428ae4ecc8402d180b4b30fd9'
           name: 'UPS: Battery charge'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.13.7.0'
@@ -544,7 +544,7 @@ zabbix_export:
             - tag: component
               value: ups
           triggers:
-            - uuid: '00000000000040008006000000000009'
+            - uuid: '8e746026b8854662af5dacba4a6dada5'
               name: 'UPS: Battery charge low (<{$UPS_BATT_WARN}%)'
               expression: 'last(/QNAP QTS hero by SNMP/ups.battery.charge)<{$UPS_BATT_WARN} and last(/QNAP QTS hero by SNMP/ups.battery.charge)>0'
               priority: WARNING
@@ -552,7 +552,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: ups
-        - uuid: '00000000000040008002000000000017'
+        - uuid: '2b7d45b759c3457791adf8d25572ce62'
           name: 'UPS: Load'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.13.6.0'
@@ -568,7 +568,7 @@ zabbix_export:
         # ---------------------------------------------------------------
         # CACHÉ mSATA
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008002000000000018'
+        - uuid: 'db1a78b9e9f64c15be5be55b186458d7'
           name: 'Cache: Available'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.11.0'
@@ -581,7 +581,7 @@ zabbix_export:
           tags:
             - tag: component
               value: cache
-        - uuid: '00000000000040008002000000000019'
+        - uuid: 'b3d92bfb11274eea92ace1d16359acd8'
           name: 'Cache: Read hit rate'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.12.0'
@@ -594,7 +594,7 @@ zabbix_export:
           tags:
             - tag: component
               value: cache
-        - uuid: '00000000000040008002000000000020'
+        - uuid: '765deca08fae438eb473399a20dc979b'
           name: 'Cache: Write hit rate'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.13.0'
@@ -607,7 +607,7 @@ zabbix_export:
           tags:
             - tag: component
               value: cache
-        - uuid: '00000000000040008002000000000021'
+        - uuid: '0e9fcb2b3c864028b434596de1423365'
           name: 'Cache: Type'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.15.0'
@@ -622,7 +622,7 @@ zabbix_export:
           tags:
             - tag: component
               value: cache
-        - uuid: '00000000000040008002000000000022'
+        - uuid: 'ded7d6f003db407094428a636b4c330e'
           name: 'Cache: RAID type'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.16.0'
@@ -635,7 +635,7 @@ zabbix_export:
           tags:
             - tag: component
               value: cache
-        - uuid: '00000000000040008002000000000023'
+        - uuid: 'cdbb24584f38407cbca746a55840c455'
           name: 'Cache: Mode'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.17.0'
@@ -651,7 +651,7 @@ zabbix_export:
         # ---------------------------------------------------------------
         # CONTADORES DE ALMACENAMIENTO
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008002000000000024'
+        - uuid: '64ad12dc58cd4d05979ad61921db987a'
           name: 'Storage: Disk count'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.1.0'
@@ -663,7 +663,7 @@ zabbix_export:
           tags:
             - tag: component
               value: storage
-        - uuid: '00000000000040008002000000000025'
+        - uuid: 'd7f3716b5e9a46d4915709b26b61dae3'
           name: 'Storage: RAID count'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.4.0'
@@ -675,7 +675,7 @@ zabbix_export:
           tags:
             - tag: component
               value: storage
-        - uuid: '00000000000040008002000000000026'
+        - uuid: '6ac99417881f496db56d9552d4005ca1'
           name: 'Storage: Pool count'
           type: SNMP_AGENT
           snmp_oid: '1.3.6.1.4.1.55062.2.10.6.0'
@@ -692,7 +692,7 @@ zabbix_export:
         # LLD 1: DISCOS FÍSICOS
         # diskTable: 1.3.6.1.4.1.55062.2.10.2
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000001'
+        - uuid: '4ff03fa05ce3438b937396dd3d02a0df'
           name: 'Disk Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#DISKINDEX},1.3.6.1.4.1.55062.2.10.2.1.1,{#DISKID},1.3.6.1.4.1.55062.2.10.2.1.2,{#DISKMANUFACTURER},1.3.6.1.4.1.55062.2.10.2.1.3,{#DISKMODEL},1.3.6.1.4.1.55062.2.10.2.1.4,{#DISKSERIALNUMBER},1.3.6.1.4.1.55062.2.10.2.1.5]'
@@ -701,7 +701,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de discos físicos via diskTable (OID .55062.2.10.2). Columnas: index, id, manufacturer, model, serial.'
           item_prototypes:
-            - uuid: '00000000000040008004000000000001'
+            - uuid: '0a7b5659dbb04c10b55c5f54e4f4ceaf'
               name: 'Disk [{#DISKMODEL}]: SMART status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.2.1.7.{#SNMPINDEX}'
@@ -716,7 +716,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000002'
+            - uuid: 'd57185ae1d9a4377ae3de9006fc250d6'
               name: 'Disk [{#DISKMODEL}]: Temperature'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.2.1.8.{#SNMPINDEX}'
@@ -729,7 +729,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000003'
+            - uuid: '5818108a7c9b4f83b5b93c5c99dbb6cf'
               name: 'Disk [{#DISKMODEL}]: Capacity'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.2.1.9.{#SNMPINDEX}'
@@ -747,7 +747,7 @@ zabbix_export:
                 - tag: component
                   value: storage
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000001'
+            - uuid: '9562b7ce184a469197cc38d7bdae35bd'
               name: 'Disk [{#DISKMODEL}]: SMART error detected (S/N: {#DISKSERIALNUMBER})'
               expression: 'last(/QNAP QTS hero by SNMP/disk.smart.status[{#SNMPINDEX}])=-1'
               priority: DISASTER
@@ -755,7 +755,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000002'
+            - uuid: '520f0fcbee3a477baa19461c5c046a23'
               name: 'Disk [{#DISKMODEL}]: SMART status is Warning or Abnormal'
               expression: 'last(/QNAP QTS hero by SNMP/disk.smart.status[{#SNMPINDEX}])=1 or last(/QNAP QTS hero by SNMP/disk.smart.status[{#SNMPINDEX}])=2'
               priority: HIGH
@@ -766,7 +766,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000003'
+            - uuid: '323cf03b21724f8da8ea6df7ad809da3'
               name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}°C for 15m)'
               expression: 'avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}'
               priority: HIGH
@@ -774,7 +774,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000004'
+            - uuid: '2c5031b36bb9476591b1bb84440d9096'
               name: 'Disk [{#DISKMODEL}]: Temperature warning (>{$HDD_TEMP_WARN}°C for 15m)'
               expression: 'avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_WARN}'
               priority: WARNING
@@ -789,7 +789,7 @@ zabbix_export:
         # LLD 2: VENTILADORES
         # sysFanTable: 1.3.6.1.4.1.55062.2.12.9
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000002'
+        - uuid: '2f5de8069a31487f952fdd79719cee4e'
           name: 'Fan Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#SYSFANINDEX},1.3.6.1.4.1.55062.2.12.9.1.1,{#SYSFANDESCR},1.3.6.1.4.1.55062.2.12.9.1.2]'
@@ -798,7 +798,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de ventiladores del sistema via sysFanTable (OID .55062.2.12.9).'
           item_prototypes:
-            - uuid: '00000000000040008004000000000004'
+            - uuid: 'd40b9d3f1c1747edafe39e95dea6346c'
               name: 'Fan [{#SYSFANDESCR}]: Speed'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.12.9.1.3.{#SNMPINDEX}'
@@ -812,7 +812,7 @@ zabbix_export:
                 - tag: component
                   value: hardware
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000005'
+            - uuid: '9f42b621086b4608840adb333ee7fb7c'
               name: 'Fan [{#SYSFANDESCR}]: Fan has stopped (0 RPM)'
               expression: 'min(/QNAP QTS hero by SNMP/fan.speed[{#SNMPINDEX}],3m)=0'
               priority: HIGH
@@ -824,7 +824,7 @@ zabbix_export:
         # LLD 3: CONJUNTOS RAID
         # raidTable: 1.3.6.1.4.1.55062.2.10.5
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000003'
+        - uuid: 'af065456140b4cd3904586b9f6535602'
           name: 'RAID Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#RAIDINDEX},1.3.6.1.4.1.55062.2.10.5.1.1,{#RAIDID},1.3.6.1.4.1.55062.2.10.5.1.2,{#RAIDNAME},1.3.6.1.4.1.55062.2.10.5.1.3]'
@@ -833,7 +833,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de conjuntos RAID via raidTable (OID .55062.2.10.5).'
           item_prototypes:
-            - uuid: '00000000000040008004000000000005'
+            - uuid: '349dc7dd20c2450ab645c17199cfb656'
               name: 'RAID [{#RAIDNAME}]: Status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.5.1.4.{#SNMPINDEX}'
@@ -865,7 +865,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000006'
+            - uuid: '0fdadf6fea2644f1b6119af4f5186f31'
               name: 'RAID [{#RAIDNAME}]: Capacity'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.5.1.5.{#SNMPINDEX}'
@@ -882,7 +882,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000007'
+            - uuid: 'c17ca56a235c4cf79d43c81e733a93e4'
               name: 'RAID [{#RAIDNAME}]: Level'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.5.1.7.{#SNMPINDEX}'
@@ -896,7 +896,7 @@ zabbix_export:
                 - tag: component
                   value: storage
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000006'
+            - uuid: '5f83b8bd94c842b9b83890911a7df212'
               name: 'RAID [{#RAIDNAME}]: Degraded or failed'
               expression: 'find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Degraded")=1 or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Dead")=1'
               priority: DISASTER
@@ -904,7 +904,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000007'
+            - uuid: 'acdbad3a241a49b29517364bdb507e8f'
               name: 'RAID [{#RAIDNAME}]: Rebuilding or synchronizing'
               expression: 'find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Rebuilding")=1 or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Synchronizing")=1'
               priority: WARNING
@@ -917,7 +917,7 @@ zabbix_export:
         # LLD 4: POOLS DE ALMACENAMIENTO ZFS
         # storagepoolTable: 1.3.6.1.4.1.55062.2.10.7
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000004'
+        - uuid: '56d0d39887794d65a891c58dbdab9441'
           name: 'Storage Pool Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#STORAGEPOOLINDEX},1.3.6.1.4.1.55062.2.10.7.1.1,{#STORAGEPOOLID},1.3.6.1.4.1.55062.2.10.7.1.2]'
@@ -926,7 +926,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de pools de almacenamiento ZFS via storagepoolTable (OID .55062.2.10.7).'
           item_prototypes:
-            - uuid: '00000000000040008004000000000008'
+            - uuid: '1ca875e0c1ba4fceb851dcc05122f3d3'
               name: 'Pool [{#STORAGEPOOLINDEX}]: Status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.7.1.5.{#SNMPINDEX}'
@@ -941,7 +941,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000009'
+            - uuid: '466172544fa742739ceacf54b85065f4'
               name: 'Pool [{#STORAGEPOOLINDEX}]: Capacity'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.7.1.3.{#SNMPINDEX}'
@@ -958,7 +958,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000010'
+            - uuid: 'f5ffd7540dae4422a159fcd65751b922'
               name: 'Pool [{#STORAGEPOOLINDEX}]: Free space'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.7.1.4.{#SNMPINDEX}'
@@ -975,7 +975,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000011'
+            - uuid: 'e182e9a02b7e4a94a7091aae46b881f4'
               name: 'Pool [{#STORAGEPOOLINDEX}]: Free space (%)'
               type: CALCULATED
               key: 'storagepool.free.pct[{#SNMPINDEX}]'
@@ -989,7 +989,7 @@ zabbix_export:
                 - tag: component
                   value: storage
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000008'
+            - uuid: 'a3d927f0a0cd47ed972700b3c3da0d72'
               name: 'Pool [{#STORAGEPOOLINDEX}]: Status is not Ready'
               expression: 'last(/QNAP QTS hero by SNMP/storagepool.status[{#SNMPINDEX}])<>0'
               priority: HIGH
@@ -997,7 +997,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000009'
+            - uuid: '36e309d6869a4212a53e5e7440451663'
               name: 'Pool [{#STORAGEPOOLINDEX}]: Free space critical (<{$POOL_FREE_CRIT}%)'
               expression: 'last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_CRIT}'
               priority: AVERAGE
@@ -1005,7 +1005,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000010'
+            - uuid: 'ccb40b629d174dcdb7dcaaf62bdd848c'
               name: 'Pool [{#STORAGEPOOLINDEX}]: Free space low (<{$POOL_FREE_WARN}%)'
               expression: 'last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_WARN}'
               priority: WARNING
@@ -1020,7 +1020,7 @@ zabbix_export:
         # LLD 5: VOLÚMENES / CARPETAS COMPARTIDAS
         # sharedFolderTable: 1.3.6.1.4.1.55062.2.10.9
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000005'
+        - uuid: '875ee18fbd5744dd93b00d6e541807c1'
           name: 'Volume (Shared Folder) Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#SHAREDFOLDERNAME},1.3.6.1.4.1.55062.2.10.9.1.2,{#SHAREDFOLDERSTATUS},1.3.6.1.4.1.55062.2.10.9.1.5]'
@@ -1029,7 +1029,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de volúmenes/carpetas compartidas via sharedFolderTable (OID .55062.2.10.9). Equivale al Volume Discovery del template base.'
           item_prototypes:
-            - uuid: '00000000000040008004000000000012'
+            - uuid: '8ef22da40ba04b2d9bc5155acdc2f37d'
               name: 'Volume [{#SHAREDFOLDERNAME}]: Status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.9.1.5.{#SNMPINDEX}'
@@ -1042,7 +1042,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000013'
+            - uuid: 'd1e1efdd220b41869b2918d683e2a2c5'
               name: 'Volume [{#SHAREDFOLDERNAME}]: Capacity'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.9.1.3.{#SNMPINDEX}'
@@ -1059,7 +1059,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000014'
+            - uuid: '0834cdae30e846e1abe9b007f4814731'
               name: 'Volume [{#SHAREDFOLDERNAME}]: Free space'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.9.1.4.{#SNMPINDEX}'
@@ -1076,7 +1076,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008004000000000015'
+            - uuid: '815f6bd6e7c049a18322ba87b56dde74'
               name: 'Volume [{#SHAREDFOLDERNAME}]: Free space (%)'
               type: CALCULATED
               key: 'volume.free.pct[{#SNMPINDEX}]'
@@ -1090,7 +1090,7 @@ zabbix_export:
                 - tag: component
                   value: storage
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000011'
+            - uuid: '8cf3b000ea2347bdbce9bf770446f150'
               name: 'Volume [{#SHAREDFOLDERNAME}]: Status is not Ready'
               expression: 'find(/QNAP QTS hero by SNMP/volume.status[{#SNMPINDEX}],,"like","Ready")=0'
               priority: DISASTER
@@ -1098,7 +1098,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000012'
+            - uuid: '5dd73bdfa7034d48b432b20ee8d6676e'
               name: 'Volume [{#SHAREDFOLDERNAME}]: Free space critical (<{$VOL_FREE_CRIT}%)'
               expression: 'last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_CRIT}'
               priority: AVERAGE
@@ -1106,7 +1106,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: storage
-            - uuid: '00000000000040008005000000000013'
+            - uuid: 'dc721af579dd4bc190360d480be15c75'
               name: 'Volume [{#SHAREDFOLDERNAME}]: Free space low (<{$VOL_FREE_WARN}%)'
               expression: 'last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_WARN}'
               priority: WARNING
@@ -1121,7 +1121,7 @@ zabbix_export:
         # LLD 6: LUNS iSCSI
         # lunTable: 1.3.6.1.4.1.55062.2.10.20
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000006'
+        - uuid: '22588b788ca24441b554c9ee66873eb5'
           name: 'iSCSI LUN Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#LUNINDEX},1.3.6.1.4.1.55062.2.10.20.1.1,{#LUNNAME},1.3.6.1.4.1.55062.2.10.20.1.6]'
@@ -1130,7 +1130,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de LUNs iSCSI via lunTable (OID .55062.2.10.20).'
           item_prototypes:
-            - uuid: '00000000000040008004000000000016'
+            - uuid: '26debcd584f04c028a48a6ffa6883e5c'
               name: 'LUN [{#LUNNAME}]: Status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.20.1.5.{#SNMPINDEX}'
@@ -1143,7 +1143,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: iscsi
-            - uuid: '00000000000040008004000000000017'
+            - uuid: '1901fe5cd248482c8c865bcef345b37a'
               name: 'LUN [{#LUNNAME}]: Capacity'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.20.1.3.{#SNMPINDEX}'
@@ -1160,7 +1160,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: iscsi
-            - uuid: '00000000000040008004000000000018'
+            - uuid: '980ef3051ba44c6980a4329ab1912464'
               name: 'LUN [{#LUNNAME}]: Mapped status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.20.1.8.{#SNMPINDEX}'
@@ -1176,7 +1176,7 @@ zabbix_export:
                 - tag: component
                   value: iscsi
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000014'
+            - uuid: '1af971823ffa49ceafbbe307653f9419'
               name: 'LUN [{#LUNNAME}]: Status is not Enabled/Ready'
               expression: 'find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Enabled")=0 and find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Ready")=0'
               priority: HIGH
@@ -1188,7 +1188,7 @@ zabbix_export:
         # LLD 7: TARGETS iSCSI
         # targetTable: 1.3.6.1.4.1.55062.2.10.22
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000007'
+        - uuid: 'd4c93d0be1ab46fe9c2d77c5d9f7f8dd'
           name: 'iSCSI Target Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#TARGETINDEX},1.3.6.1.4.1.55062.2.10.22.1.1,{#TARGETNAME},1.3.6.1.4.1.55062.2.10.22.1.3,{#TARGETIQN},1.3.6.1.4.1.55062.2.10.22.1.4]'
@@ -1197,7 +1197,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de targets iSCSI via targetTable (OID .55062.2.10.22).'
           item_prototypes:
-            - uuid: '00000000000040008004000000000019'
+            - uuid: '4f47cd257f504710a80156ff02bf0aff'
               name: 'iSCSI Target [{#TARGETNAME}]: Status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.22.1.6.{#SNMPINDEX}'
@@ -1213,7 +1213,7 @@ zabbix_export:
                 - tag: component
                   value: iscsi
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000015'
+            - uuid: '283f6dd3dc044aeca6400136da4d4bd1'
               name: 'iSCSI Target [{#TARGETNAME}]: Offline'
               expression: 'last(/QNAP QTS hero by SNMP/iscsi.target.status[{#SNMPINDEX}])=-1'
               priority: HIGH
@@ -1225,7 +1225,7 @@ zabbix_export:
         # LLD 8: INTERFACES DE RED (IF-MIB estándar)
         # ifTable: 1.3.6.1.2.1.2.2 / ifXTable: 1.3.6.1.2.1.31.1.1
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000008'
+        - uuid: '8d3502d5a37643e7a5f28422e86dea07'
           name: 'Network Interface Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#IFINDEX},1.3.6.1.2.1.2.2.1.1,{#IFNAME},1.3.6.1.2.1.2.2.1.2,{#IFALIAS},1.3.6.1.2.1.31.1.1.1.18,{#IFTYPE},1.3.6.1.2.1.2.2.1.3]'
@@ -1244,7 +1244,7 @@ zabbix_export:
                 operator: NOT_MATCHES_REGEX
                 formulaid: B
           item_prototypes:
-            - uuid: '00000000000040008004000000000020'
+            - uuid: '3137a806132a4731b59a2fc0bc57b955'
               name: 'Interface [{#IFNAME}]: Bits received'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.2.1.31.1.1.1.6.{#SNMPINDEX}'
@@ -1262,7 +1262,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: network
-            - uuid: '00000000000040008004000000000021'
+            - uuid: '6aa9c33914fb41019175e5976f7bd36b'
               name: 'Interface [{#IFNAME}]: Bits sent'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.2.1.31.1.1.1.10.{#SNMPINDEX}'
@@ -1280,7 +1280,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: network
-            - uuid: '00000000000040008004000000000022'
+            - uuid: 'e1776e40d94543889a8057e6c997b553'
               name: 'Interface [{#IFNAME}]: Operational status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.2.1.2.2.1.8.{#SNMPINDEX}'
@@ -1293,7 +1293,7 @@ zabbix_export:
                 - tag: component
                   value: network
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000016'
+            - uuid: '892bc19fea614f558c790b59f9f1b2a6'
               name: 'Interface [{#IFNAME}]: Link down'
               expression: 'last(/QNAP QTS hero by SNMP/net.if.status[{#SNMPINDEX}])=2'
               priority: AVERAGE
@@ -1305,7 +1305,7 @@ zabbix_export:
         # LLD 9: RECINTOS DE EXPANSIÓN (NUEVO en QTS hero)
         # enclosureTable: 1.3.6.1.4.1.55062.2.10.34
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000009'
+        - uuid: '833124981f2b42ba8ef382d65ec75778'
           name: 'Enclosure Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#ENCLOSUREINDEX},1.3.6.1.4.1.55062.2.10.34.1.1,{#ENCLOSUREMODEL},1.3.6.1.4.1.55062.2.10.34.1.3,{#ENCLOSURENAME},1.3.6.1.4.1.55062.2.10.34.1.6]'
@@ -1314,7 +1314,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de recintos de expansión QNAP via enclosureTable (OID .55062.2.10.34). Este LLD no existe en el template base Zabbix 6.x (nuevo en QTS hero MIB).'
           item_prototypes:
-            - uuid: '00000000000040008004000000000023'
+            - uuid: 'dda4b07f848a4eb1abc1a8a853fd1b62'
               name: 'Enclosure [{#ENCLOSURENAME}]: Temperature'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.34.1.7.{#SNMPINDEX}'
@@ -1328,7 +1328,7 @@ zabbix_export:
                 - tag: component
                   value: hardware
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000017'
+            - uuid: 'f4f62392629243e3a94389b1a9d452ee'
               name: 'Enclosure [{#ENCLOSURENAME}]: Temperature too high (>45°C for 10m)'
               expression: 'avg(/QNAP QTS hero by SNMP/enclosure.temperature[{#SNMPINDEX}],10m)>45'
               priority: WARNING
@@ -1340,7 +1340,7 @@ zabbix_export:
         # LLD 10: DISCOS mSATA DE CACHÉ (NUEVO en QTS hero)
         # mSATAdiskTable: 1.3.6.1.4.1.55062.2.10.32
         # ---------------------------------------------------------------
-        - uuid: '00000000000040008003000000000010'
+        - uuid: 'c93afd9d877542998d309ec267deaa56'
           name: 'mSATA Cache Disk Discovery'
           type: SNMP_AGENT
           snmp_oid: 'discovery[{#MSATAINDEX},1.3.6.1.4.1.55062.2.10.32.1.1,{#MSATADISKMODEL},1.3.6.1.4.1.55062.2.10.32.1.8]'
@@ -1349,7 +1349,7 @@ zabbix_export:
           lifetime: 3d
           description: 'Descubrimiento de discos mSATA de caché via mSATAdiskTable (OID .55062.2.10.32). Este LLD no existe en el template base Zabbix 6.x (nuevo en QTS hero MIB).'
           item_prototypes:
-            - uuid: '00000000000040008004000000000024'
+            - uuid: '81c0bc4f3d9b407287655fa2e9143ab8'
               name: 'mSATA [{#MSATADISKMODEL}]: SMART status'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.32.1.5.{#SNMPINDEX}'
@@ -1364,7 +1364,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: cache
-            - uuid: '00000000000040008004000000000025'
+            - uuid: '89286ade7e834f8da61e9300aa339372'
               name: 'mSATA [{#MSATADISKMODEL}]: Temperature'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.32.1.6.{#SNMPINDEX}'
@@ -1377,7 +1377,7 @@ zabbix_export:
               tags:
                 - tag: component
                   value: cache
-            - uuid: '00000000000040008004000000000026'
+            - uuid: 'f027c988a13e4e4ba670b4c0d8cc8a0a'
               name: 'mSATA [{#MSATADISKMODEL}]: Capacity'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.55062.2.10.32.1.9.{#SNMPINDEX}'
@@ -1395,7 +1395,7 @@ zabbix_export:
                 - tag: component
                   value: cache
           trigger_prototypes:
-            - uuid: '00000000000040008005000000000018'
+            - uuid: 'a55aa09f92854daf9283cd95d64b4126'
               name: 'mSATA [{#MSATADISKMODEL}]: SMART error'
               expression: 'last(/QNAP QTS hero by SNMP/msata.smart.status[{#SNMPINDEX}])=-1'
               priority: HIGH
