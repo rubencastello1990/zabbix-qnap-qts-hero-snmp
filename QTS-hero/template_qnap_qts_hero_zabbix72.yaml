@@ -247,6 +247,25 @@ zabbix_export:
           tags:
             - tag: component
               value: system
+          triggers:
+            - uuid: '00000000-0000-4000-8006-000000000001'
+              name: 'SNMP: No response from host'
+              expression: 'nodata(/QNAP QTS hero by SNMP/system.uptime,{$SNMP.TIMEOUT})=1'
+              priority: DISASTER
+              description: 'El host no responde a peticiones SNMP durante {$SNMP.TIMEOUT}. El NAS puede estar apagado, la red caída o SNMP deshabilitado.'
+              manual_close: 'YES'
+              tags:
+                - tag: component
+                  value: health
+            - uuid: '00000000-0000-4000-8006-000000000002'
+              name: 'System: Device has been restarted (uptime < 10m)'
+              expression: 'last(/QNAP QTS hero by SNMP/system.uptime)<10m'
+              priority: WARNING
+              description: 'El sistema se ha reiniciado recientemente (uptime inferior a 10 minutos). Revisar si fue planificado.'
+              manual_close: 'YES'
+              tags:
+                - tag: component
+                  value: system
         - uuid: '00000000-0000-4000-8002-000000000002'
           name: 'System: Model'
           type: SNMP_AGENT
@@ -314,6 +333,16 @@ zabbix_export:
           tags:
             - tag: component
               value: system
+          triggers:
+            - uuid: '00000000-0000-4000-8006-000000000003'
+              name: 'System: Firmware update available'
+              expression: 'last(/QNAP QTS hero by SNMP/system.firmware.update)=1'
+              priority: INFO
+              description: 'Hay una actualización de firmware disponible para el dispositivo QNAP. Planificar actualización en ventana de mantenimiento.'
+              manual_close: 'YES'
+              tags:
+                - tag: component
+                  value: system
         - uuid: '00000000-0000-4000-8002-000000000007'
           name: 'CPU: Temperature'
           type: SNMP_AGENT
@@ -327,6 +356,26 @@ zabbix_export:
           tags:
             - tag: component
               value: cpu
+          triggers:
+            - uuid: '00000000-0000-4000-8006-000000000005'
+              name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}°C for 15m)'
+              expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}'
+              priority: HIGH
+              description: 'La temperatura del CPU supera {$CPU_TEMP_HIGH}°C de forma sostenida durante 15 minutos. Riesgo de throttling o fallo del hardware.'
+              tags:
+                - tag: component
+                  value: cpu
+            - uuid: '00000000-0000-4000-8006-000000000006'
+              name: 'CPU: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
+              expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_WARN}'
+              priority: WARNING
+              description: 'La temperatura del CPU supera el umbral de advertencia {$CPU_TEMP_WARN}°C durante 15 minutos.'
+              dependencies:
+                - name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}°C for 15m)'
+                  expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}'
+              tags:
+                - tag: component
+                  value: cpu
         - uuid: '00000000-0000-4000-8002-000000000008'
           name: 'System: Temperature'
           type: SNMP_AGENT
@@ -340,6 +389,26 @@ zabbix_export:
           tags:
             - tag: component
               value: system
+          triggers:
+            - uuid: '00000000-0000-4000-8006-000000000007'
+              name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}°C for 15m)'
+              expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}'
+              priority: HIGH
+              description: 'La temperatura del chasis/sistema supera {$CPU_TEMP_HIGH}°C de forma sostenida. Revisar ventilación del armario.'
+              tags:
+                - tag: component
+                  value: system
+            - uuid: '00000000-0000-4000-8006-000000000008'
+              name: 'System: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
+              expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_WARN}'
+              priority: WARNING
+              description: 'La temperatura del chasis/sistema supera el umbral de advertencia {$CPU_TEMP_WARN}°C durante 15 minutos.'
+              dependencies:
+                - name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}°C for 15m)'
+                  expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}'
+              tags:
+                - tag: component
+                  value: system
         - uuid: '00000000-0000-4000-8002-000000000009'
           name: 'CPU: Utilization'
           type: SNMP_AGENT
@@ -400,6 +469,15 @@ zabbix_export:
           tags:
             - tag: component
               value: memory
+          triggers:
+            - uuid: '00000000-0000-4000-8006-000000000010'
+              name: 'Memory: High utilization (>90% for 15m)'
+              expression: 'avg(/QNAP QTS hero by SNMP/vm.memory.util,15m)>90'
+              priority: WARNING
+              description: 'La utilización de memoria RAM del NAS supera el 90% durante 15 minutos. Puede afectar al rendimiento de los servicios.'
+              tags:
+                - tag: component
+                  value: memory
         - uuid: '00000000-0000-4000-8002-000000000013'
           name: 'System: Power status'
           type: SNMP_AGENT
@@ -415,6 +493,15 @@ zabbix_export:
           tags:
             - tag: component
               value: power
+          triggers:
+            - uuid: '00000000-0000-4000-8006-000000000004'
+              name: 'System: Power failure detected'
+              expression: 'last(/QNAP QTS hero by SNMP/system.power.status)=-1'
+              priority: HIGH
+              description: 'El estado de alimentación del sistema indica fallo. Revisar la fuente de alimentación y el cableado.'
+              tags:
+                - tag: component
+                  value: power
         - uuid: '00000000-0000-4000-8002-000000000014'
           name: 'System: UPS status code'
           type: SNMP_AGENT
@@ -456,6 +543,15 @@ zabbix_export:
           tags:
             - tag: component
               value: ups
+          triggers:
+            - uuid: '00000000-0000-4000-8006-000000000009'
+              name: 'UPS: Battery charge low (<{$UPS_BATT_WARN}%)'
+              expression: 'last(/QNAP QTS hero by SNMP/ups.battery.charge)<{$UPS_BATT_WARN} and last(/QNAP QTS hero by SNMP/ups.battery.charge)>0'
+              priority: WARNING
+              description: 'La batería del UPS está por debajo del umbral de advertencia {$UPS_BATT_WARN}%. En caso de corte eléctrico, el tiempo de autonomía es insuficiente.'
+              tags:
+                - tag: component
+                  value: ups
         - uuid: '00000000-0000-4000-8002-000000000017'
           name: 'UPS: Load'
           type: SNMP_AGENT
@@ -1307,96 +1403,3 @@ zabbix_export:
               tags:
                 - tag: component
                   value: cache
-      triggers:
-        # ---------------------------------------------------------------
-        # TRIGGERS ESCALARES (sobre ítems estáticos)
-        # ---------------------------------------------------------------
-        - uuid: '00000000-0000-4000-8006-000000000001'
-          name: 'SNMP: No response from host'
-          expression: 'nodata(/QNAP QTS hero by SNMP/system.uptime,{$SNMP.TIMEOUT})=1'
-          priority: DISASTER
-          description: 'El host no responde a peticiones SNMP durante {$SNMP.TIMEOUT}. El NAS puede estar apagado, la red caída o SNMP deshabilitado.'
-          manual_close: 'YES'
-          tags:
-            - tag: component
-              value: health
-        - uuid: '00000000-0000-4000-8006-000000000002'
-          name: 'System: Device has been restarted (uptime < 10m)'
-          expression: 'last(/QNAP QTS hero by SNMP/system.uptime)<10m'
-          priority: WARNING
-          description: 'El sistema se ha reiniciado recientemente (uptime inferior a 10 minutos). Revisar si fue planificado.'
-          manual_close: 'YES'
-          tags:
-            - tag: component
-              value: system
-        - uuid: '00000000-0000-4000-8006-000000000003'
-          name: 'System: Firmware update available'
-          expression: 'last(/QNAP QTS hero by SNMP/system.firmware.update)=1'
-          priority: INFO
-          description: 'Hay una actualización de firmware disponible para el dispositivo QNAP. Planificar actualización en ventana de mantenimiento.'
-          manual_close: 'YES'
-          tags:
-            - tag: component
-              value: system
-        - uuid: '00000000-0000-4000-8006-000000000004'
-          name: 'System: Power failure detected'
-          expression: 'last(/QNAP QTS hero by SNMP/system.power.status)=-1'
-          priority: HIGH
-          description: 'El estado de alimentación del sistema indica fallo. Revisar la fuente de alimentación y el cableado.'
-          tags:
-            - tag: component
-              value: power
-        - uuid: '00000000-0000-4000-8006-000000000005'
-          name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-          expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}'
-          priority: HIGH
-          description: 'La temperatura del CPU supera {$CPU_TEMP_HIGH}°C de forma sostenida durante 15 minutos. Riesgo de throttling o fallo del hardware.'
-          tags:
-            - tag: component
-              value: cpu
-        - uuid: '00000000-0000-4000-8006-000000000006'
-          name: 'CPU: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
-          expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_WARN}'
-          priority: WARNING
-          description: 'La temperatura del CPU supera el umbral de advertencia {$CPU_TEMP_WARN}°C durante 15 minutos.'
-          dependencies:
-            - name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}'
-          tags:
-            - tag: component
-              value: cpu
-        - uuid: '00000000-0000-4000-8006-000000000007'
-          name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-          expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}'
-          priority: HIGH
-          description: 'La temperatura del chasis/sistema supera {$CPU_TEMP_HIGH}°C de forma sostenida. Revisar ventilación del armario.'
-          tags:
-            - tag: component
-              value: system
-        - uuid: '00000000-0000-4000-8006-000000000008'
-          name: 'System: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
-          expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_WARN}'
-          priority: WARNING
-          description: 'La temperatura del chasis/sistema supera el umbral de advertencia {$CPU_TEMP_WARN}°C durante 15 minutos.'
-          dependencies:
-            - name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}'
-          tags:
-            - tag: component
-              value: system
-        - uuid: '00000000-0000-4000-8006-000000000009'
-          name: 'UPS: Battery charge low (<{$UPS_BATT_WARN}%)'
-          expression: 'last(/QNAP QTS hero by SNMP/ups.battery.charge)<{$UPS_BATT_WARN} and last(/QNAP QTS hero by SNMP/ups.battery.charge)>0'
-          priority: WARNING
-          description: 'La batería del UPS está por debajo del umbral de advertencia {$UPS_BATT_WARN}%. En caso de corte eléctrico, el tiempo de autonomía es insuficiente.'
-          tags:
-            - tag: component
-              value: ups
-        - uuid: '00000000-0000-4000-8006-000000000010'
-          name: 'Memory: High utilization (>90% for 15m)'
-          expression: 'avg(/QNAP QTS hero by SNMP/vm.memory.util,15m)>90'
-          priority: WARNING
-          description: 'La utilización de memoria RAM del NAS supera el 90% durante 15 minutos. Puede afectar al rendimiento de los servicios.'
-          tags:
-            - tag: component
-              value: memory
