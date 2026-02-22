@@ -173,7 +173,8 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: uptime
-      description: Tiempo desde el ultimo reinicio (MIB-II sysUpTime). Centesimas de segundo convertidas a segundos.
+      description: Tiempo desde el ultimo reinicio (MIB-II sysUpTime). Centesimas
+        de segundo convertidas a segundos.
       preprocessing:
       - type: MULTIPLIER
         parameters:
@@ -412,7 +413,7 @@ zabbix_export:
       delay: 1m
       history: 7d
       trends: 365d
-      value_type: UNSIGNED
+      value_type: FLOAT
       description: 'Estado de alimentacion: 0=OK, -1=Fallo.'
       valuemap:
         name: QNAP Power Status
@@ -552,8 +553,9 @@ zabbix_export:
       key: disk.discovery
       delay: 1h
       lifetime: 3d
-      description: Discos fisicos via diskTable (.55062.2.10.2). Camina diskModel y diskSerialNumber (columnas accesibles).
-        diskStatus=col7 string, diskTemperature=col8, diskCapacity=col9 bytes.
+      description: Discos fisicos via diskTable (.55062.2.10.2). Camina diskModel
+        y diskSerialNumber (columnas accesibles). diskStatus=col7 string, diskTemperature=col8,
+        diskCapacity=col9 bytes.
       item_prototypes:
       - uuid: f3f9c035689145c3998bc044bd1579c2
         name: 'Disk [{#DISKMODEL}]: Status'
@@ -564,18 +566,11 @@ zabbix_export:
         history: 7d
         trends: '0'
         value_type: CHAR
-        description: 'Estado del disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}). diskStatus OCTET STRING: Ready, Warning, Error,
-          No disk, etc.'
+        description: 'Estado del disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}). diskStatus
+          OCTET STRING: Ready, Warning, Error, No disk, etc.'
         tags:
         - tag: component
           value: storage
-        trigger_prototypes:
-        - uuid: 87732d2170ed4966b297caae6329fa71
-          expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^Ready$")=0 and length(last(/QNAP QTS
-            hero by SNMP/disk.status[{#SNMPINDEX}]))>0
-          name: 'Disk [{#DISKMODEL}] (S/N: {#DISKSERIALNUMBER}): Status is not Ready'
-          priority: DISASTER
-          description: El disco reporta un estado diferente a "Ready". Revisar inmediatamente.
       - uuid: cd5918ee1468499790e65585efaaeebc
         name: 'Disk [{#DISKMODEL}]: Temperature'
         type: SNMP_AGENT
@@ -589,17 +584,6 @@ zabbix_export:
         tags:
         - tag: component
           value: storage
-        trigger_prototypes:
-        - uuid: 7920af47948441c480f9375ec300c658
-          expression: last(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}])>{$HDD_TEMP_HIGH}
-          name: 'Disk [{#DISKMODEL}]: Temperature too high (>{$HDD_TEMP_HIGH}°C)'
-          priority: HIGH
-          description: La temperatura del disco supera el umbral crítico.
-        - uuid: 5855f62718fa42fcb5e08618874da6b1
-          expression: last(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}])>{$HDD_TEMP_WARN}
-          name: 'Disk [{#DISKMODEL}]: Temperature warning (>{$HDD_TEMP_WARN}°C)'
-          priority: WARNING
-          description: La temperatura del disco supera el umbral de advertencia.
       - uuid: f9ac69e3716c4da7b11a48c1a92d6be0
         name: 'Disk [{#DISKMODEL}]: Capacity'
         type: SNMP_AGENT
@@ -616,18 +600,21 @@ zabbix_export:
       trigger_prototypes:
       - uuid: 7650dcfbfd3f4883bab73ae2f95c4c6b
         name: 'Disk [{#DISKMODEL}]: Status is not Ready (S/N: {#DISKSERIALNUMBER})'
-        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^Ready$")=0 and length(last(/QNAP QTS
-          hero by SNMP/disk.status[{#SNMPINDEX}]))>0
+        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^Ready$")=0
+          and length(last(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}]))>0
         priority: HIGH
-        description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) no esta en estado Ready.'
+        description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) no esta en
+          estado Ready.'
         tags:
         - tag: component
           value: storage
       - uuid: 29593dc2556d4376b3491e04c479b41a
-        name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C for 15m)'
+        name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C for
+          15m)'
         expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}
         priority: HIGH
-        description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_HIGH}C durante 15m.
+        description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_HIGH}C durante
+          15m.
         tags:
         - tag: component
           value: storage
@@ -635,9 +622,11 @@ zabbix_export:
         name: 'Disk [{#DISKMODEL}]: Temperature warning (>{$HDD_TEMP_WARN}C for 15m)'
         expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_WARN}
         priority: WARNING
-        description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_WARN}C durante 15m.
+        description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_WARN}C durante
+          15m.
         dependencies:
-        - name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C for 15m)'
+        - name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C
+            for 15m)'
           expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}
         tags:
         - tag: component
@@ -649,7 +638,8 @@ zabbix_export:
       key: fan.discovery
       delay: 1h
       lifetime: 3d
-      description: Ventiladores via sysFanTable (.55062.2.12.9). Camina sysFanDescr (col2, accesible).
+      description: Ventiladores via sysFanTable (.55062.2.12.9). Camina sysFanDescr
+        (col2, accesible).
       item_prototypes:
       - uuid: 4237aaa3d89f4512baa4541905d97e68
         name: 'Fan [{#SYSFANDESCR}]: Speed'
@@ -664,12 +654,6 @@ zabbix_export:
         tags:
         - tag: component
           value: hardware
-        trigger_prototypes:
-        - uuid: 3c1c34e0d1054917a72f3a7369e2c52f
-          expression: last(/QNAP QTS hero by SNMP/fan.speed[{#SNMPINDEX}])=0
-          name: 'Fan [{#SYSFANDESCR}]: Speed is 0 RPM (fan stopped)'
-          priority: HIGH
-          description: Ventilador parado — riesgo de sobrecalentamiento.
       trigger_prototypes:
       - uuid: c7661791a6764d23bd7ce56b5b1a81fd
         name: 'Fan [{#SYSFANDESCR}]: Fan has stopped (0 RPM)'
@@ -697,26 +681,11 @@ zabbix_export:
         history: 7d
         trends: '0'
         value_type: CHAR
-        description: Estado del RAID {#RAIDNAME}. Valor numerico traducido a texto via JavaScript.
-        preprocessing:
-        - type: JAVASCRIPT
-          parameters:
-          - var s={"\"-1\"":"Single",\"0\":\"Ready\",\"1\":\"Initializing\",\"2\":\"Degraded\",\"3\":\"Dead\",\"4\":\"Rebuilding\",\"5\":\"Synchronizing\",\"6\":\"Parity
-            checking\"}; var k=String(parseInt(value)); return s[k]||("Unknown("+value+")");
+        description: Estado del RAID {#RAIDNAME}. Valor numerico traducido a texto
+          via JavaScript.
         tags:
         - tag: component
           value: storage
-        trigger_prototypes:
-        - uuid: bfe562c4536f4fb0ba0f23f9e1bd00a4
-          expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"regexp","Degraded|Dead|Error|Failed")=1
-          name: 'RAID [{#RAIDNAME}]: Status is Degraded or Dead'
-          priority: DISASTER
-          description: RAID en estado crítico.
-        - uuid: e4da8411dca84831a10c15fd857f78fa
-          expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"regexp","Rebuild|Sync|Initializ")=1
-          name: 'RAID [{#RAIDNAME}]: Status is Rebuilding or Synchronizing'
-          priority: WARNING
-          description: RAID en proceso de reconstrucción o sincronización.
       - uuid: a660894d16274841b14e97466c7837fa
         name: 'RAID [{#RAIDNAME}]: Capacity'
         type: SNMP_AGENT
@@ -746,8 +715,8 @@ zabbix_export:
       trigger_prototypes:
       - uuid: 70675e5077024d8493359ab3c0c2e486
         name: 'RAID [{#RAIDNAME}]: Degraded or failed'
-        expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Degraded")=1 or find(/QNAP QTS hero by
-          SNMP/raid.status[{#SNMPINDEX}],,"like","Dead")=1
+        expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Degraded")=1
+          or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Dead")=1
         priority: DISASTER
         description: RAID {#RAIDNAME} degradado o fallido.
         tags:
@@ -755,8 +724,8 @@ zabbix_export:
           value: storage
       - uuid: b8b46995b9de4d1b844830cfa720cc78
         name: 'RAID [{#RAIDNAME}]: Rebuilding or synchronizing'
-        expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Rebuilding")=1 or find(/QNAP QTS hero by
-          SNMP/raid.status[{#SNMPINDEX}],,"like","Synchronizing")=1
+        expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Rebuilding")=1
+          or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Synchronizing")=1
         priority: WARNING
         manual_close: 'YES'
         description: RAID {#RAIDNAME} en reconstruccion o sincronizacion.
@@ -770,7 +739,8 @@ zabbix_export:
       key: storagepool.discovery
       delay: 1h
       lifetime: 3d
-      description: Pools ZFS via storagepoolTable (.55062.2.10.7). Camina storagepoolID (col2). Capacidades en bytes (Counter64).
+      description: Pools ZFS via storagepoolTable (.55062.2.10.7). Camina storagepoolID
+        (col2). Capacidades en bytes (Counter64).
       item_prototypes:
       - uuid: 2f3acadb58b74391a78257ceff4e764e
         name: 'Pool [{#SNMPINDEX}]: Status'
@@ -781,18 +751,13 @@ zabbix_export:
         history: 7d
         trends: 365d
         value_type: UNSIGNED
-        description: Estado del pool {#SNMPINDEX}. Ver value map QNAP Storage Pool Status.
+        description: Estado del pool {#SNMPINDEX}. Ver value map QNAP Storage Pool
+          Status.
         valuemap:
           name: QNAP Storage Pool Status
         tags:
         - tag: component
           value: storage
-        trigger_prototypes:
-        - uuid: 4dfa6a5beae348d8a3bb6d9c364b2112
-          expression: last(/QNAP QTS hero by SNMP/storagepool.status[{#SNMPINDEX}])<>0
-          name: 'Storage Pool [{#STORAGEPOOLID}]: Status is not Ready'
-          priority: HIGH
-          description: Pool de almacenamiento no está en estado Ready (0).
       - uuid: 81ea4fca00cd426b9fa9518340a1e713
         name: 'Pool [{#SNMPINDEX}]: Capacity'
         type: SNMP_AGENT
@@ -827,22 +792,12 @@ zabbix_export:
         history: 7d
         trends: 365d
         units: '%'
-        params: last(/QNAP QTS hero by SNMP/storagepool.free[{#SNMPINDEX}])/last(/QNAP QTS hero by SNMP/storagepool.capacity[{#SNMPINDEX}])*100
+        params: last(/QNAP QTS hero by SNMP/storagepool.free[{#SNMPINDEX}])/last(/QNAP
+          QTS hero by SNMP/storagepool.capacity[{#SNMPINDEX}])*100
         description: '% libre en el pool.'
         tags:
         - tag: component
           value: storage
-        trigger_prototypes:
-        - uuid: f4971a3a2ea34e04915a4b98d039a1e8
-          expression: last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_CRIT}
-          name: 'Storage Pool [{#STORAGEPOOLID}]: Free space critical (<{$POOL_FREE_CRIT}%)'
-          priority: AVERAGE
-          description: Espacio libre en el pool por debajo del umbral crítico.
-        - uuid: 4b334c710a4f46c08c9d22e4d1cba70a
-          expression: last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_WARN}
-          name: 'Storage Pool [{#STORAGEPOOLID}]: Free space low (<{$POOL_FREE_WARN}%)'
-          priority: WARNING
-          description: Espacio libre en el pool por debajo del umbral de advertencia.
       trigger_prototypes:
       - uuid: 13c346703518417bb85ea32777700740
         name: 'Pool [{#SNMPINDEX}]: Status is not Ready'
@@ -878,7 +833,8 @@ zabbix_export:
       key: volume.discovery
       delay: 1h
       lifetime: 3d
-      description: Volumenes/carpetas compartidas via sharedFolderTable (.55062.2.10.9). Capacidades en bytes (Counter64).
+      description: Volumenes/carpetas compartidas via sharedFolderTable (.55062.2.10.9).
+        Capacidades en bytes (Counter64).
       item_prototypes:
       - uuid: dc9d60d419e54f1eb5cbf6b3272a91ab
         name: 'Volume [{#SHAREDFOLDERNAME}]: Status'
@@ -893,13 +849,6 @@ zabbix_export:
         tags:
         - tag: component
           value: storage
-        trigger_prototypes:
-        - uuid: 10344f81aa544acaa4abeb548baed6d0
-          expression: find(/QNAP QTS hero by SNMP/volume.status[{#SNMPINDEX}],,"regexp","^Ready$")=0 and length(last(/QNAP
-            QTS hero by SNMP/volume.status[{#SNMPINDEX}]))>0
-          name: 'Volume [{#SHAREDFOLDERNAME}]: Status is not Ready'
-          priority: DISASTER
-          description: Volumen / carpeta compartida no está disponible.
       - uuid: be192ca2e24d42f3b19f9de3535cd8b9
         name: 'Volume [{#SHAREDFOLDERNAME}]: Capacity'
         type: SNMP_AGENT
@@ -934,24 +883,16 @@ zabbix_export:
         history: 7d
         trends: 365d
         units: '%'
-        params: last(/QNAP QTS hero by SNMP/volume.free[{#SNMPINDEX}])/last(/QNAP QTS hero by SNMP/volume.capacity[{#SNMPINDEX}])*100
+        params: last(/QNAP QTS hero by SNMP/volume.free[{#SNMPINDEX}])/last(/QNAP
+          QTS hero by SNMP/volume.capacity[{#SNMPINDEX}])*100
         description: '% libre en el volumen.'
         tags:
         - tag: component
           value: storage
-        trigger_prototypes:
-        - uuid: 22f62e719a1f43049df3bab15ac2b049
-          expression: last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_CRIT}
-          name: 'Volume [{#SHAREDFOLDERNAME}]: Free space critical (<{$VOL_FREE_CRIT}%)'
-          priority: AVERAGE
-        - uuid: 8e4de24c933d40e0aa658ed42950689e
-          expression: last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_WARN}
-          name: 'Volume [{#SHAREDFOLDERNAME}]: Free space low (<{$VOL_FREE_WARN}%)'
-          priority: WARNING
       trigger_prototypes:
       - uuid: 7fa458ff1e454e3581d5e6e7dbfa8cf3
         name: 'Volume [{#SHAREDFOLDERNAME}]: Status is not Ready'
-        expression: find(/QNAP QTS hero by SNMP/volume.status[{#SNMPINDEX}],,"like","Ready")=0
+        expression: find(/QNAP QTS hero by SNMP/volume.status[{#SNMPINDEX}],,"regexp","^Ready$")=0
         priority: DISASTER
         description: Volumen {#SHAREDFOLDERNAME} no esta en estado Ready.
         tags:
@@ -998,13 +939,6 @@ zabbix_export:
         tags:
         - tag: component
           value: iscsi
-        trigger_prototypes:
-        - uuid: dceb6c5c77bd45678f7be1b6a31026c8
-          expression: find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"regexp","Enabled|Ready")=0 and length(last(/QNAP
-            QTS hero by SNMP/lun.status[{#SNMPINDEX}]))>0
-          name: 'LUN [{#LUNNAME}]: Status is not Enabled/Ready'
-          priority: HIGH
-          description: LUN iSCSI no está habilitado o no está listo.
       - uuid: dbc87bfaf29046128b55e7412dc4dbbe
         name: 'LUN [{#LUNNAME}]: Capacity'
         type: SNMP_AGENT
@@ -1036,7 +970,8 @@ zabbix_export:
       trigger_prototypes:
       - uuid: a1747f3dbe9741ed94e756f63a76734f
         name: 'LUN [{#LUNNAME}]: Status is not Enabled/Ready'
-        expression: find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Enabled")=0 and find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Ready")=0
+        expression: find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Enabled")=0
+          and find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Ready")=0
         priority: HIGH
         description: LUN {#LUNNAME} no esta habilitado ni ready.
         tags:
@@ -1059,19 +994,14 @@ zabbix_export:
         delay: 1m
         history: 7d
         trends: 365d
-        value_type: UNSIGNED
-        description: 'Estado del target {#TARGETNAME} (IQN: {#TARGETIQN}): -1=Offline, 0=Ready, 1=Connected.'
+        value_type: FLOAT
+        description: 'Estado del target {#TARGETNAME} (IQN: {#TARGETIQN}): -1=Offline,
+          0=Ready, 1=Connected.'
         valuemap:
           name: QNAP Target Status
         tags:
         - tag: component
           value: iscsi
-        trigger_prototypes:
-        - uuid: c8f8ac837d874587a654c5481aad5cdb
-          expression: last(/QNAP QTS hero by SNMP/target.status[{#SNMPINDEX}])=-1
-          name: 'iSCSI Target [{#TARGETNAME}]: Status is Offline'
-          priority: HIGH
-          description: El target iSCSI está offline.
       trigger_prototypes:
       - uuid: d5f43daeba9b4fff99286f675b9d8ede
         name: 'iSCSI Target [{#TARGETNAME}]: Offline'
@@ -1088,7 +1018,8 @@ zabbix_export:
       key: net.if.discovery
       delay: 1h
       lifetime: 3d
-      description: Interfaces de red via IF-MIB estandar (RFC 2863). Camina ifDescr e ifAlias.
+      description: Interfaces de red via IF-MIB estandar (RFC 2863). Camina ifDescr
+        e ifAlias.
       filter:
         evaltype: AND
         conditions:
@@ -1148,12 +1079,6 @@ zabbix_export:
         tags:
         - tag: component
           value: network
-        trigger_prototypes:
-        - uuid: 43f23dc744504839a930bf95524e4334
-          expression: last(/QNAP QTS hero by SNMP/net.if.status[{#SNMPINDEX}])=2
-          name: 'Interface [{#IFNAME}]: Link down'
-          priority: AVERAGE
-          description: La interfaz de red está caída.
       trigger_prototypes:
       - uuid: c44a5de1506c4fa7a06988d213f688e3
         name: 'Interface [{#IFNAME}]: Link down'
@@ -1185,12 +1110,6 @@ zabbix_export:
         tags:
         - tag: component
           value: hardware
-        trigger_prototypes:
-        - uuid: 4c84b1018b5d49418a408f0a96604ff5
-          expression: last(/QNAP QTS hero by SNMP/enclosure.temperature[{#SNMPINDEX}])>40
-          name: 'Enclosure [{#ENCLOSURENAME}]: Temperature too high'
-          priority: WARNING
-          description: La temperatura del recinto de expansión supera 40°C.
       trigger_prototypes:
       - uuid: ce06f29eb19940069bda7f3026633f24
         name: 'Enclosure [{#ENCLOSURENAME}]: Temperature too high (>45C for 10m)'
@@ -1217,19 +1136,14 @@ zabbix_export:
         delay: 5m
         history: 7d
         trends: 365d
-        value_type: UNSIGNED
-        description: 'SMART del disco mSATA {#MSATADISKMODEL}: -1=Error, 0=Good, 1=Warning, 2=Abnormal.'
+        value_type: FLOAT
+        description: 'SMART del disco mSATA {#MSATADISKMODEL}: -1=Error, 0=Good, 1=Warning,
+          2=Abnormal.'
         valuemap:
           name: QNAP mSATA SMART
         tags:
         - tag: component
           value: cache
-        trigger_prototypes:
-        - uuid: 8d0784995515461ca7951cfcf702accf
-          expression: last(/QNAP QTS hero by SNMP/msata.smart[{#SNMPINDEX}])<>0
-          name: 'mSATA [{#MSATADISKMODEL}]: SMART status is not Good'
-          priority: HIGH
-          description: El disco mSATA/caché reporta un estado SMART anómalo.
       - uuid: 63f697f605b5458281d10207fd6ac38f
         name: 'mSATA [{#MSATADISKMODEL}]: Temperature'
         type: SNMP_AGENT
