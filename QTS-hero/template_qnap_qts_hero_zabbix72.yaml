@@ -308,7 +308,6 @@ zabbix_export:
         dependencies:
         - name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}C for 15m)'
           expression: avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}
-          uuid: 3870a29832c3443c8538b5f5d36c5530
         tags:
         - tag: component
           value: cpu
@@ -342,7 +341,6 @@ zabbix_export:
         dependencies:
         - name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}C for 15m)'
           expression: avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}
-          uuid: 0562e751c2404883b28303fc5821cdcd
         tags:
         - tag: component
           value: system
