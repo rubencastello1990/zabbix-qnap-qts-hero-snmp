@@ -655,11 +655,9 @@ zabbix_export:
         - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Critical state - Error (S/N:
             {#DISKSERIALNUMBER})'
           expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Error")=1
-          uuid: be879d1a0d77498a8cf50afecef2c359
         - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Faulty/Warning state (S/N:
             {#DISKSERIALNUMBER})'
           expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Warning|Faulty")=1
-          uuid: 181ea166db7e44978248692f2e7f5e2d
       - uuid: 29593dc2556d4376b3491e04c479b41a
         name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C
           for 15m)'
@@ -681,7 +679,6 @@ zabbix_export:
         - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature is too high
             (>{$HDD_TEMP_HIGH}C for 15m)'
           expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}
-          uuid: 29593dc2556d4376b3491e04c479b41a
         tags:
         - tag: component
           value: storage
@@ -877,7 +874,6 @@ zabbix_export:
         dependencies:
         - name: 'Pool [{#SNMPINDEX}]: Free space critical (<{$POOL_FREE_CRIT}%)'
           expression: last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_CRIT}
-          uuid: 1b324075b3de40909275b0733c9dc90b
         tags:
         - tag: component
           value: storage
@@ -969,7 +965,6 @@ zabbix_export:
         dependencies:
         - name: 'Volume [{#SHAREDFOLDERNAME}]: Free space critical (<{$VOL_FREE_CRIT}%)'
           expression: last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_CRIT}
-          uuid: 36ec74628f4546cfb287cfa3d944b1e8
         tags:
         - tag: component
           value: storage
