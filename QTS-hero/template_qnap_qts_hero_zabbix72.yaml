@@ -283,7 +283,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: 1.3.6.1.4.1.55062.2.12.10.0
       key: cpu.temperature
-      delay: 3m
+      delay: 5m
       history: 7d
       trends: 365d
       units: C
@@ -316,7 +316,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: 1.3.6.1.4.1.55062.2.12.11.0
       key: system.temperature
-      delay: 3m
+      delay: 5m
       history: 7d
       trends: 365d
       units: C
@@ -349,7 +349,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: 1.3.6.1.4.1.55062.2.12.12.0
       key: system.cpu.util
-      delay: 1m
+      delay: 3m
       history: 7d
       trends: 365d
       units: '%'
@@ -375,7 +375,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: 1.3.6.1.4.1.55062.2.12.16.0
       key: vm.memory.used
-      delay: 1m
+      delay: 3m
       history: 7d
       trends: 365d
       units: B
@@ -410,7 +410,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: 1.3.6.1.4.1.55062.2.12.19.0
       key: system.power.status
-      delay: 1m
+      delay: 5m
       history: 7d
       trends: 365d
       value_type: FLOAT
@@ -558,11 +558,11 @@ zabbix_export:
         diskCapacity=col9 bytes.
       item_prototypes:
       - uuid: f3f9c035689145c3998bc044bd1579c2
-        name: 'Disk [{#DISKMODEL}]: Status'
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Status'
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.7.{#SNMPINDEX}
         key: disk.status[{#SNMPINDEX}]
-        delay: 3m
+        delay: 10m
         history: 7d
         trends: '0'
         value_type: CHAR
@@ -572,11 +572,11 @@ zabbix_export:
         - tag: component
           value: storage
       - uuid: cd5918ee1468499790e65585efaaeebc
-        name: 'Disk [{#DISKMODEL}]: Temperature'
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature'
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.8.{#SNMPINDEX}
         key: disk.temperature[{#SNMPINDEX}]
-        delay: 3m
+        delay: 5m
         history: 7d
         trends: 365d
         units: C
@@ -585,7 +585,7 @@ zabbix_export:
         - tag: component
           value: storage
       - uuid: f9ac69e3716c4da7b11a48c1a92d6be0
-        name: 'Disk [{#DISKMODEL}]: Capacity'
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Capacity'
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.9.{#SNMPINDEX}
         key: disk.capacity[{#SNMPINDEX}]
@@ -599,7 +599,8 @@ zabbix_export:
           value: storage
       trigger_prototypes:
       - uuid: 7650dcfbfd3f4883bab73ae2f95c4c6b
-        name: 'Disk [{#DISKMODEL}]: Status is not Ready (S/N: {#DISKSERIALNUMBER})'
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Status is not Ready (S/N:
+          {#DISKSERIALNUMBER})'
         expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^(Ready|Standby)$")=0
           and length(last(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}]))>0
         priority: HIGH
@@ -609,8 +610,8 @@ zabbix_export:
         - tag: component
           value: storage
       - uuid: 29593dc2556d4376b3491e04c479b41a
-        name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C for
-          15m)'
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C
+          for 15m)'
         expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}
         priority: HIGH
         description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_HIGH}C durante
@@ -619,7 +620,8 @@ zabbix_export:
         - tag: component
           value: storage
       - uuid: 79508c6bc09f4696ba28387afef60fcb
-        name: 'Disk [{#DISKMODEL}]: Temperature warning (>{$HDD_TEMP_WARN}C for 15m)'
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature warning (>{$HDD_TEMP_WARN}C
+          for 15m)'
         expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_WARN}
         priority: WARNING
         description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_WARN}C durante
@@ -646,7 +648,7 @@ zabbix_export:
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.12.9.1.3.{#SNMPINDEX}
         key: fan.speed[{#SNMPINDEX}]
-        delay: 3m
+        delay: 10m
         history: 7d
         trends: 365d
         units: rpm
@@ -1036,7 +1038,7 @@ zabbix_export:
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.2.1.31.1.1.1.6.{#SNMPINDEX}
         key: net.if.in[{#SNMPINDEX}]
-        delay: 1m
+        delay: 3m
         history: 7d
         trends: 365d
         units: bps
@@ -1054,7 +1056,7 @@ zabbix_export:
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.2.1.31.1.1.1.10.{#SNMPINDEX}
         key: net.if.out[{#SNMPINDEX}]
-        delay: 1m
+        delay: 3m
         history: 7d
         trends: 365d
         units: bps
@@ -1072,7 +1074,7 @@ zabbix_export:
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.2.1.2.2.1.8.{#SNMPINDEX}
         key: net.if.status[{#SNMPINDEX}]
-        delay: 1m
+        delay: 3m
         history: 7d
         trends: 365d
         description: 'Estado operativo: 1=up, 2=down.'
@@ -1102,7 +1104,7 @@ zabbix_export:
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.34.1.7.{#SNMPINDEX}
         key: enclosure.temperature[{#SNMPINDEX}]
-        delay: 3m
+        delay: 10m
         history: 7d
         trends: 365d
         units: C
@@ -1133,7 +1135,7 @@ zabbix_export:
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.32.1.5.{#SNMPINDEX}
         key: msata.smart.status[{#SNMPINDEX}]
-        delay: 5m
+        delay: 10m
         history: 7d
         trends: 365d
         value_type: FLOAT
@@ -1149,7 +1151,7 @@ zabbix_export:
         type: SNMP_AGENT
         snmp_oid: 1.3.6.1.4.1.55062.2.10.32.1.6.{#SNMPINDEX}
         key: msata.temperature[{#SNMPINDEX}]
-        delay: 3m
+        delay: 5m
         history: 7d
         trends: 365d
         units: C
