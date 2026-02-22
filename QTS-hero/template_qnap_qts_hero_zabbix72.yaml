@@ -1,6 +1,5 @@
 zabbix_export:
   version: '7.2'
-  date: '2026-02-22T00:00:00Z'
   template_groups:
     - uuid: '00000000-0000-4000-8000-000000000001'
       name: 'Templates/Storage devices'
