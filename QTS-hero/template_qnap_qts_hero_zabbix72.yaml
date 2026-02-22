@@ -600,7 +600,7 @@ zabbix_export:
       trigger_prototypes:
       - uuid: 7650dcfbfd3f4883bab73ae2f95c4c6b
         name: 'Disk [{#DISKMODEL}]: Status is not Ready (S/N: {#DISKSERIALNUMBER})'
-        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^Ready$")=0
+        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^(Ready|Standby)$")=0
           and length(last(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}]))>0
         priority: HIGH
         description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) no esta en
@@ -636,7 +636,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: discovery[{#SYSFANDESCR},1.3.6.1.4.1.55062.2.12.9.1.2]
       key: fan.discovery
-      delay: 1h
+      delay: 6h
       lifetime: 3d
       description: Ventiladores via sysFanTable (.55062.2.12.9). Camina sysFanDescr
         (col2, accesible).
@@ -668,7 +668,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: discovery[{#RAIDNAME},1.3.6.1.4.1.55062.2.10.5.1.3]
       key: raid.discovery
-      delay: 1h
+      delay: 2h
       lifetime: 3d
       description: RAIDs via raidTable (.55062.2.10.5). Camina raidName (col3).
       item_prototypes:
@@ -922,7 +922,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: discovery[{#LUNNAME},1.3.6.1.4.1.55062.2.10.20.1.6]
       key: lun.discovery
-      delay: 1h
+      delay: 2h
       lifetime: 3d
       description: LUNs iSCSI via lunTable (.55062.2.10.20). Camina lunName (col6).
       item_prototypes:
@@ -982,7 +982,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: discovery[{#TARGETNAME},1.3.6.1.4.1.55062.2.10.22.1.3,{#TARGETIQN},1.3.6.1.4.1.55062.2.10.22.1.4]
       key: iscsi.target.discovery
-      delay: 1h
+      delay: 2h
       lifetime: 3d
       description: Targets iSCSI via targetTable (.55062.2.10.22).
       item_prototypes:
@@ -1016,7 +1016,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: discovery[{#IFNAME},1.3.6.1.2.1.2.2.1.2,{#IFALIAS},1.3.6.1.2.1.31.1.1.1.18]
       key: net.if.discovery
-      delay: 1h
+      delay: 30m
       lifetime: 3d
       description: Interfaces de red via IF-MIB estandar (RFC 2863). Camina ifDescr
         e ifAlias.
@@ -1093,7 +1093,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: discovery[{#ENCLOSURENAME},1.3.6.1.4.1.55062.2.10.34.1.6,{#ENCLOSUREMODEL},1.3.6.1.4.1.55062.2.10.34.1.3]
       key: enclosure.discovery
-      delay: 1h
+      delay: 6h
       lifetime: 3d
       description: Recintos de expansion via enclosureTable (.55062.2.10.34).
       item_prototypes:
@@ -1124,7 +1124,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: discovery[{#MSATADISKMODEL},1.3.6.1.4.1.55062.2.10.32.1.8]
       key: msata.disk.discovery
-      delay: 1h
+      delay: 6h
       lifetime: 3d
       description: Discos mSATA de cache via msataDiskTable (.55062.2.10.32).
       item_prototypes:
