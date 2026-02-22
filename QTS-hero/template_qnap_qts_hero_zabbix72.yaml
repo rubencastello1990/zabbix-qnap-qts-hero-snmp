@@ -47,7 +47,7 @@ zabbix_export:
         - Uso de CPU por núcleo (solo CPU total disponible en la MIB)
 
         Consultar MAPPING.md para el mapeo completo de OIDs respecto al template base Zabbix 6.x.
-      template_groups:
+      groups:
         - name: 'Templates/Storage devices'
       vendor:
         name: QNAP
