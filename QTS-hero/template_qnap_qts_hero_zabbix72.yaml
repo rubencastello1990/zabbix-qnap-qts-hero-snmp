@@ -1,1405 +1,1186 @@
 zabbix_export:
   version: '7.2'
   template_groups:
-    - uuid: '11dcb1f3944a421ea7acdc5cea89ff73'
-      name: 'Templates/Storage devices'
+  - uuid: 10606ec18c2f4bacb6331c6a2f4c6e85
+    name: Templates/Storage devices
   templates:
-    - uuid: 'b8d993fd7bc54c27961f6f19f2c51a63'
-      template: 'QNAP QTS hero by SNMP'
-      name: 'QNAP QTS hero by SNMP'
-      description: |
-        ## Overview
+  - uuid: 1ce335247edd41e5bae979070c428a52
+    template: QNAP QTS hero by SNMP
+    name: QNAP QTS hero by SNMP
+    description: 'Template SNMPv2c para QNAP QTS hero / QuTS hero (firmware h5.x+).
 
-        Template SNMPv2c para dispositivos QNAP QTS hero / QuTS hero.
-        Diseñado para Zabbix 7.2 usando la MIB QTS-MIB (enterprise 1.3.6.1.4.1.55062.2).
+      Usa la MIB QTS-MIB enterprise 1.3.6.1.4.1.55062.2.
 
-        ### Funcionalidades
 
-        - Sistema: modelo, hostname, firmware, temperaturas CPU/sistema, CPU %, memoria, estado energético
-        - Almacenamiento: discos físicos (SMART, temperatura, capacidad), RAIDs (estado, nivel, capacidad)
-        - Pools ZFS: estado, capacidad, espacio libre y % libre con alertas configurables
-        - Volúmenes/carpetas compartidas: estado, capacidad y espacio libre
-        - iSCSI: descubrimiento y monitorización de LUNs y targets
-        - Red: interfaces via IF-MIB estándar (RFC 2863) con tráfico en bps
-        - Hardware: ventiladores (RPM), recintos de expansión (temperatura)
-        - Discos mSATA de caché (SMART, temperatura, capacidad)
-        - UPS externo: estado, carga y nivel de batería
+      Requisitos: Zabbix 7.2+, SNMP v2c habilitado en el NAS.
 
-        ### Requisitos
+      Ver README.md para instalacion y MAPPING.md para referencia de OIDs.
 
-        - Zabbix 7.2 o superior
-        - SNMP v2c habilitado en el NAS (Panel de control → Red → SNMP)
-        - Firmware QuTS hero h5.x o superior (MIB enterprise 1.3.6.1.4.1.55062.2)
-        - La community string debe coincidir con la macro {$SNMP_COMMUNITY}
 
-        ### Configuración
+      Limitaciones conocidas: IOPS/latencia de disco y CPU por nucleo
 
-        1. Importar este template en Zabbix
-        2. Crear un host para el NAS con interfaz SNMP v2c
-        3. Vincular este template al host
-        4. Ajustar las macros según el entorno (umbrales de temperatura, espacio, etc.)
-
-        ### Limitaciones conocidas
-
-        Los siguientes OIDs no están disponibles en la MIB QTS hero:
-        - IOPS global de disco (OID legacy 24681, no existe en 55062.2)
-        - Latencia global de disco (ídem)
-        - Uso de CPU por núcleo (solo CPU total disponible en la MIB)
-
-        Consultar MAPPING.md para el mapeo completo de OIDs respecto al template base Zabbix 6.x.
-      groups:
-        - name: 'Templates/Storage devices'
-      vendor:
-        name: QNAP
-        version: '2026-02'
+      no estan disponibles en la MIB QTS hero.'
+    groups:
+    - name: Templates/Storage devices
+    vendor:
+      name: QNAP
+      version: 2026-02
+    tags:
+    - tag: vendor
+      value: qnap
+    - tag: platform
+      value: qts-hero
+    - tag: class
+      value: storage
+    macros:
+    - macro: '{$SNMP_COMMUNITY}'
+      value: public
+      description: SNMP v2c community string
+    - macro: '{$SNMP.TIMEOUT}'
+      value: 5m
+      description: Sin respuesta SNMP -> trigger DISASTER
+    - macro: '{$CPU_TEMP_WARN}'
+      value: '75'
+      description: Temperatura CPU WARNING (grados C)
+    - macro: '{$CPU_TEMP_HIGH}'
+      value: '85'
+      description: Temperatura CPU HIGH (grados C)
+    - macro: '{$HDD_TEMP_WARN}'
+      value: '45'
+      description: Temperatura disco WARNING (grados C)
+    - macro: '{$HDD_TEMP_HIGH}'
+      value: '55'
+      description: Temperatura disco HIGH (grados C)
+    - macro: '{$POOL_FREE_WARN}'
+      value: '20'
+      description: Pool libre minimo para WARNING (%)
+    - macro: '{$POOL_FREE_CRIT}'
+      value: '10'
+      description: Pool libre minimo para CRITICAL (%)
+    - macro: '{$VOL_FREE_WARN}'
+      value: '20'
+      description: Volumen libre minimo para WARNING (%)
+    - macro: '{$VOL_FREE_CRIT}'
+      value: '10'
+      description: Volumen libre minimo para CRITICAL (%)
+    - macro: '{$NET_IF_MATCHES}'
+      value: .+
+      description: Regex inclusion interfaces red
+    - macro: '{$NET_IF_NOT_MATCHES}'
+      value: CHANGE_IF_NEEDED
+      description: Regex exclusion interfaces red
+    valuemaps:
+    - uuid: 0a9c499fb15a4cba9a4c21ff0c197268
+      name: QNAP Power Status
+      mappings:
+      - value: '-1'
+        newvalue: Failed
+      - value: '0'
+        newvalue: OK
+    - uuid: 749a5bcec070469eb2a33d0ac641789f
+      name: QNAP Storage Pool Status
+      mappings:
+      - value: '-6'
+        newvalue: SED Locked
+      - value: '-5'
+        newvalue: Detaching
+      - value: '-4'
+        newvalue: Removing
+      - value: '-3'
+        newvalue: Error
+      - value: '-2'
+        newvalue: Not ready
+      - value: '-1'
+        newvalue: Warning
+      - value: '0'
+        newvalue: Ready
+      - value: '1'
+        newvalue: Enable QTier
+      - value: '2'
+        newvalue: SED Locking
+      - value: '3'
+        newvalue: SED Unlocking
+      - value: '4'
+        newvalue: Removing tier
+      - value: '5'
+        newvalue: Creating
+      - value: '8'
+        newvalue: Stopping
+      - value: '9'
+        newvalue: Stopped
+      - value: '10'
+        newvalue: Starting
+      - value: '11'
+        newvalue: Importing
+      - value: '12'
+        newvalue: Read only
+      - value: '13'
+        newvalue: Pruning
+      - value: '14'
+        newvalue: Tuning
+    - uuid: ed85044dca984caf9573d81435fc0e8a
+      name: QNAP LUN Status
+      mappings:
+      - value: '-1'
+        newvalue: Offline
+      - value: '0'
+        newvalue: Disconnected
+      - value: '1'
+        newvalue: Connected
+    - uuid: 475b417a4a0f40ce81e85695e537b4bd
+      name: QNAP Target Status
+      mappings:
+      - value: '-1'
+        newvalue: Offline
+      - value: '0'
+        newvalue: Ready
+      - value: '1'
+        newvalue: Connected
+    - uuid: b61f3b397c854bf3accb47a6a821db8e
+      name: QNAP Cache Type
+      mappings:
+      - value: '0'
+        newvalue: Read-only
+      - value: '1'
+        newvalue: Read-write
+      - value: '2'
+        newvalue: Write-only
+    - uuid: 56a2fab464ae44709e85054196cbc9a3
+      name: QNAP Firmware Update
+      mappings:
+      - value: '0'
+        newvalue: Up to date
+      - value: '1'
+        newvalue: Update available
+    - uuid: 01aa079e1e7e4265af05d7639ef418fe
+      name: QNAP mSATA SMART
+      mappings:
+      - value: '-1'
+        newvalue: Error
+      - value: '0'
+        newvalue: Good
+      - value: '1'
+        newvalue: Warning
+      - value: '2'
+        newvalue: Abnormal
+    items:
+    - uuid: a16670219c98428f9c55d8fe2334eff2
+      name: 'System: Uptime'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.2.1.1.3.0
+      key: system.uptime
+      delay: 1m
+      history: 7d
+      trends: 365d
+      units: uptime
+      description: Tiempo desde el ultimo reinicio (MIB-II sysUpTime). Centesimas
+        de segundo convertidas a segundos.
+      preprocessing:
+      - type: MULTIPLIER
+        parameters:
+        - '0.01'
       tags:
-        - tag: vendor
-          value: qnap
-        - tag: platform
-          value: qts-hero
-        - tag: class
+      - tag: component
+        value: system
+      triggers:
+      - uuid: 2932cf4f9ade48a297efa38c3ead3c21
+        name: 'SNMP: No response from host'
+        expression: nodata(/QNAP QTS hero by SNMP/system.uptime,{$SNMP.TIMEOUT})=1
+        priority: DISASTER
+        manual_close: 'YES'
+        description: Sin respuesta SNMP durante {$SNMP.TIMEOUT}.
+        tags:
+        - tag: component
+          value: health
+      - uuid: cc4f909bbf594961bf28f0d721937778
+        name: 'System: Device has been restarted (uptime < 10m)'
+        expression: last(/QNAP QTS hero by SNMP/system.uptime)<10m
+        priority: WARNING
+        manual_close: 'YES'
+        description: El sistema se reinicio recientemente.
+        tags:
+        - tag: component
+          value: system
+    - uuid: 3ee5db56d79e4b4ab69a19bb3f6c9be2
+      name: 'System: Model'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.3.0
+      key: system.model
+      delay: 1h
+      history: 7d
+      trends: '0'
+      value_type: CHAR
+      description: Modelo del NAS QNAP.
+      tags:
+      - tag: component
+        value: system
+    - uuid: 90ae5d275f424ab1a55fef36533f7800
+      name: 'System: Hostname'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.4.0
+      key: system.name
+      delay: 1h
+      history: 7d
+      trends: '0'
+      value_type: CHAR
+      description: Nombre del dispositivo en QTS hero.
+      tags:
+      - tag: component
+        value: system
+    - uuid: b860ba75e8974d8d8f34092b20a6169a
+      name: 'System: Serial number'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.5.0
+      key: system.serial
+      delay: 1h
+      history: 7d
+      trends: '0'
+      value_type: CHAR
+      description: Numero de serie del dispositivo.
+      tags:
+      - tag: component
+        value: system
+    - uuid: 9dfdd97cad8e4407a95ac3963efb7b8c
+      name: 'System: Firmware version'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.6.0
+      key: system.firmware.version
+      delay: 1h
+      history: 7d
+      trends: '0'
+      value_type: CHAR
+      description: Version del firmware QuTS hero.
+      tags:
+      - tag: component
+        value: system
+    - uuid: 57a121466a80409ba93da870f83ca2ec
+      name: 'System: Firmware update available'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.7.0
+      key: system.firmware.update
+      delay: 6h
+      history: 7d
+      trends: 365d
+      value_type: UNSIGNED
+      description: 0=al dia, 1=actualizacion disponible.
+      valuemap:
+        name: QNAP Firmware Update
+      tags:
+      - tag: component
+        value: system
+      triggers:
+      - uuid: d76d4c99d4384f55ab145649d4722489
+        name: 'System: Firmware update available'
+        expression: last(/QNAP QTS hero by SNMP/system.firmware.update)=1
+        priority: INFO
+        manual_close: 'YES'
+        description: Actualizacion de firmware disponible. Planificar mantenimiento.
+        tags:
+        - tag: component
+          value: system
+    - uuid: fab4a917240944b0b1ea00618da16af0
+      name: 'CPU: Temperature'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.10.0
+      key: cpu.temperature
+      delay: 3m
+      history: 7d
+      trends: 365d
+      units: C
+      description: Temperatura del procesador (Integer32, grados Celsius).
+      tags:
+      - tag: component
+        value: cpu
+      triggers:
+      - uuid: 3870a29832c3443c8538b5f5d36c5530
+        name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}C for 15m)'
+        expression: avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}
+        priority: HIGH
+        description: Temperatura CPU supera {$CPU_TEMP_HIGH}C durante 15m.
+        tags:
+        - tag: component
+          value: cpu
+      - uuid: 42cbf75592f9437d868b63e036648c04
+        name: 'CPU: Temperature warning (>{$CPU_TEMP_WARN}C for 15m)'
+        expression: avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_WARN}
+        priority: WARNING
+        description: Temperatura CPU supera {$CPU_TEMP_WARN}C durante 15m.
+        dependencies:
+        - name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}C for 15m)'
+          expression: avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}
+        tags:
+        - tag: component
+          value: cpu
+    - uuid: 666e733399554518a134cc0921c36321
+      name: 'System: Temperature'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.11.0
+      key: system.temperature
+      delay: 3m
+      history: 7d
+      trends: 365d
+      units: C
+      description: Temperatura del chasis/sistema (Integer32, grados Celsius).
+      tags:
+      - tag: component
+        value: system
+      triggers:
+      - uuid: 0562e751c2404883b28303fc5821cdcd
+        name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}C for 15m)'
+        expression: avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}
+        priority: HIGH
+        description: Temperatura sistema supera {$CPU_TEMP_HIGH}C durante 15m.
+        tags:
+        - tag: component
+          value: system
+      - uuid: 4579c2a9b6c14b99a83378fda9b7b8c5
+        name: 'System: Temperature warning (>{$CPU_TEMP_WARN}C for 15m)'
+        expression: avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_WARN}
+        priority: WARNING
+        description: Temperatura sistema supera {$CPU_TEMP_WARN}C durante 15m.
+        dependencies:
+        - name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}C for 15m)'
+          expression: avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}
+        tags:
+        - tag: component
+          value: system
+    - uuid: e436d7852bd34a5498376e47ff83e974
+      name: 'CPU: Utilization'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.12.0
+      key: system.cpu.util
+      delay: 1m
+      history: 7d
+      trends: 365d
+      units: '%'
+      description: Uso total de CPU (Integer32, porcentaje).
+      tags:
+      - tag: component
+        value: cpu
+    - uuid: 8a62925d9a9f4a7d8973e06a96e825d6
+      name: 'Memory: Total'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.13.0
+      key: vm.memory.total
+      delay: 1h
+      history: 7d
+      trends: 365d
+      units: B
+      description: Memoria RAM total (Counter64, bytes segun MIB).
+      tags:
+      - tag: component
+        value: memory
+    - uuid: 0b0d4604bdc345a8b79ff8537b2ef068
+      name: 'Memory: Used'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.16.0
+      key: vm.memory.used
+      delay: 1m
+      history: 7d
+      trends: 365d
+      units: B
+      description: Memoria RAM usada (Counter64, bytes segun MIB).
+      tags:
+      - tag: component
+        value: memory
+    - uuid: d4e2f77c40654f65869cd5701a211c3f
+      name: 'Memory: Utilization'
+      type: CALCULATED
+      key: vm.memory.util
+      delay: 1m
+      history: 7d
+      trends: 365d
+      units: '%'
+      params: last(/QNAP QTS hero by SNMP/vm.memory.used)/last(/QNAP QTS hero by SNMP/vm.memory.total)*100
+      description: Porcentaje de RAM utilizada.
+      tags:
+      - tag: component
+        value: memory
+      triggers:
+      - uuid: 6e4c03a5b79e4ebaa9afa42b8d6ce2d3
+        name: 'Memory: High utilization (>90% for 15m)'
+        expression: avg(/QNAP QTS hero by SNMP/vm.memory.util,15m)>90
+        priority: WARNING
+        description: Utilizacion de RAM supera el 90% durante 15m.
+        tags:
+        - tag: component
+          value: memory
+    - uuid: dfac2a729c274f969a27881ac38477dc
+      name: 'System: Power status'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.12.19.0
+      key: system.power.status
+      delay: 1m
+      history: 7d
+      trends: 365d
+      value_type: UNSIGNED
+      description: 'Estado de alimentacion: 0=OK, -1=Fallo.'
+      valuemap:
+        name: QNAP Power Status
+      tags:
+      - tag: component
+        value: power
+      triggers:
+      - uuid: 6be48f5ecc35459a85bbd963cfbea28d
+        name: 'System: Power failure detected'
+        expression: last(/QNAP QTS hero by SNMP/system.power.status)=-1
+        priority: HIGH
+        description: Fallo en la alimentacion del sistema.
+        tags:
+        - tag: component
+          value: power
+    - uuid: 12244b969c1f46609adb9ad64e798716
+      name: 'Cache: Available'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.11.0
+      key: cache.available.percent
+      delay: 5m
+      history: 7d
+      trends: 365d
+      units: '%'
+      description: '% de cache mSATA disponible.'
+      tags:
+      - tag: component
+        value: cache
+    - uuid: 6e09b8bfaf6741dc889eb5ac7d4efc58
+      name: 'Cache: Read hit rate'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.12.0
+      key: cache.read.hit.rate
+      delay: 5m
+      history: 7d
+      trends: 365d
+      units: '%'
+      description: Tasa de acierto de lectura de la cache mSATA.
+      tags:
+      - tag: component
+        value: cache
+    - uuid: 1649eb65738b411a8104c2f8a2344767
+      name: 'Cache: Write hit rate'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.13.0
+      key: cache.write.hit.rate
+      delay: 5m
+      history: 7d
+      trends: 365d
+      units: '%'
+      description: Tasa de acierto de escritura de la cache mSATA.
+      tags:
+      - tag: component
+        value: cache
+    - uuid: e9637b4c170f4520b45d4586cb3ce8fa
+      name: 'Cache: Type'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.15.0
+      key: cache.type
+      delay: 1h
+      history: 7d
+      trends: 365d
+      value_type: UNSIGNED
+      description: 'Tipo de cache: 0=Read-only, 1=Read-write, 2=Write-only.'
+      valuemap:
+        name: QNAP Cache Type
+      tags:
+      - tag: component
+        value: cache
+    - uuid: f3bda1a03dea4360b448da55cadf9103
+      name: 'Cache: RAID type'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.16.0
+      key: cache.raid.type
+      delay: 1h
+      history: 7d
+      trends: '0'
+      value_type: CHAR
+      description: Tipo RAID del conjunto de cache mSATA.
+      tags:
+      - tag: component
+        value: cache
+    - uuid: fc653b7b3e034eff9aa67c977cca8686
+      name: 'Cache: Mode'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.17.0
+      key: cache.mode
+      delay: 1h
+      history: 7d
+      trends: '0'
+      value_type: CHAR
+      description: Modo de la cache (Read/Write/Read-write).
+      tags:
+      - tag: component
+        value: cache
+    - uuid: 1ed1eae0820548cf8b055abb5b8d5d7b
+      name: 'Storage: Disk count'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.1.0
+      key: storage.disk.count
+      delay: 15m
+      history: 7d
+      trends: 365d
+      description: Numero total de discos detectados.
+      tags:
+      - tag: component
+        value: storage
+    - uuid: f52f5d38f77b4e28948fdc7be8b61443
+      name: 'Storage: RAID count'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.4.0
+      key: storage.raid.count
+      delay: 15m
+      history: 7d
+      trends: 365d
+      description: Numero de conjuntos RAID configurados.
+      tags:
+      - tag: component
+        value: storage
+    - uuid: cab3a2db92bc4989b0e846a87300350e
+      name: 'Storage: Pool count'
+      type: SNMP_AGENT
+      snmp_oid: 1.3.6.1.4.1.55062.2.10.6.0
+      key: storage.pool.count
+      delay: 15m
+      history: 7d
+      trends: 365d
+      description: Numero de pools ZFS configurados.
+      tags:
+      - tag: component
+        value: storage
+    discovery_rules:
+    - uuid: 7ea7af068da041d881ed00e838ae36a2
+      name: Disk Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#DISKMODEL},1.3.6.1.4.1.55062.2.10.2.1.4,{#DISKSERIALNUMBER},1.3.6.1.4.1.55062.2.10.2.1.5]
+      key: disk.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Discos fisicos via diskTable (.55062.2.10.2). Camina diskModel
+        y diskSerialNumber (columnas accesibles). diskStatus=col7 string, diskTemperature=col8,
+        diskCapacity=col9 bytes.
+      item_prototypes:
+      - uuid: f3f9c035689145c3998bc044bd1579c2
+        name: 'Disk [{#DISKMODEL}]: Status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.7.{#SNMPINDEX}
+        key: disk.status[{#SNMPINDEX}]
+        delay: 3m
+        history: 7d
+        trends: '0'
+        value_type: CHAR
+        description: 'Estado del disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}). diskStatus
+          OCTET STRING: Ready, Warning, Error, No disk, etc.'
+        tags:
+        - tag: component
           value: storage
-      macros:
-        - macro: '{$SNMP_COMMUNITY}'
-          value: public
-          description: 'SNMP v2c community string del dispositivo QNAP'
-        - macro: '{$SNMP.TIMEOUT}'
-          value: 5m
-          description: 'Tiempo sin respuesta SNMP antes de activar el trigger de disponibilidad'
-        - macro: '{$CPU_TEMP_WARN}'
-          value: '75'
-          description: 'Temperatura CPU: umbral WARNING (°C)'
-        - macro: '{$CPU_TEMP_HIGH}'
-          value: '85'
-          description: 'Temperatura CPU: umbral HIGH (°C)'
-        - macro: '{$HDD_TEMP_WARN}'
-          value: '45'
-          description: 'Temperatura disco duro: umbral WARNING (°C)'
-        - macro: '{$HDD_TEMP_HIGH}'
-          value: '55'
-          description: 'Temperatura disco duro: umbral HIGH (°C)'
-        - macro: '{$POOL_FREE_WARN}'
-          value: '20'
-          description: 'Pool de almacenamiento: % libre mínimo para WARNING'
-        - macro: '{$POOL_FREE_CRIT}'
-          value: '10'
-          description: 'Pool de almacenamiento: % libre mínimo para CRITICAL'
-        - macro: '{$VOL_FREE_WARN}'
-          value: '20'
-          description: 'Volumen/carpeta compartida: % libre mínimo para WARNING'
-        - macro: '{$VOL_FREE_CRIT}'
-          value: '10'
-          description: 'Volumen/carpeta compartida: % libre mínimo para CRITICAL'
-        - macro: '{$UPS_BATT_WARN}'
-          value: '30'
-          description: 'Batería UPS: % mínimo para WARNING'
-        - macro: '{$NET_IF_MATCHES}'
-          value: .+
-          description: 'Expresión regular para incluir interfaces de red en el LLD'
-        - macro: '{$NET_IF_NOT_MATCHES}'
-          value: CHANGE_IF_NEEDED
-          description: 'Expresión regular para excluir interfaces de red del LLD (ej. lo|dummy)'
-      valuemaps:
-        - uuid: 'b970ff38cb124fe784f1228937a40161'
-          name: 'QNAP Power Status'
-          mappings:
-            - value: '-1'
-              newvalue: Failed
-            - value: '0'
-              newvalue: OK
-        - uuid: '87642f50dbf8426cabfa0891a6062052'
-          name: 'QNAP Storage Pool Status'
-          mappings:
-            - value: '-6'
-              newvalue: 'SED Locked'
-            - value: '-5'
-              newvalue: Detaching
-            - value: '-4'
-              newvalue: Removing
-            - value: '-3'
-              newvalue: Error
-            - value: '-2'
-              newvalue: 'Not ready'
-            - value: '-1'
-              newvalue: Warning
-            - value: '0'
-              newvalue: Ready
-            - value: '1'
-              newvalue: 'Enable QTier'
-            - value: '2'
-              newvalue: 'SED Locking'
-            - value: '3'
-              newvalue: 'SED Unlocking'
-            - value: '4'
-              newvalue: 'Removing tier'
-            - value: '5'
-              newvalue: Creating
-            - value: '8'
-              newvalue: Stopping
-            - value: '9'
-              newvalue: Stopped
-            - value: '10'
-              newvalue: Starting
-            - value: '11'
-              newvalue: Importing
-            - value: '12'
-              newvalue: 'Read only'
-            - value: '13'
-              newvalue: Pruning
-            - value: '14'
-              newvalue: Tuning
-        - uuid: 'f1b7a0cddbdd4604b9eb8e83b2b2b677'
-          name: 'QNAP LUN Status'
-          mappings:
-            - value: '-1'
-              newvalue: Offline
-            - value: '0'
-              newvalue: Disconnected
-            - value: '1'
-              newvalue: Connected
-        - uuid: 'a797e67ecd8b49518beb4571c599a0d7'
-          name: 'QNAP Target Status'
-          mappings:
-            - value: '-1'
-              newvalue: Offline
-            - value: '0'
-              newvalue: Ready
-            - value: '1'
-              newvalue: Connected
-        - uuid: '9aa72ba777284c8fb775bcb75a502e2e'
-          name: 'QNAP SMART Status'
-          mappings:
-            - value: '-1'
-              newvalue: Error
-            - value: '0'
-              newvalue: Good
-            - value: '1'
-              newvalue: Warning
-            - value: '2'
-              newvalue: Abnormal
-        - uuid: '4a1c0279842d401da4d5a6db6775e3a1'
-          name: 'QNAP Cache Type'
-          mappings:
-            - value: '0'
-              newvalue: 'Read-only'
-            - value: '1'
-              newvalue: 'Read-write'
-            - value: '2'
-              newvalue: 'Write-only'
-        - uuid: 'd2ac1d72a51e4384bcdd107401a58147'
-          name: 'QNAP Firmware Update'
-          mappings:
-            - value: '0'
-              newvalue: 'Up to date'
-            - value: '1'
-              newvalue: 'Update available'
-        - uuid: 'a871ce01365c4e17b100cebfaf912f2a'
-          name: 'QNAP WORM Status'
-          mappings:
-            - value: '0'
-              newvalue: 'No'
-            - value: '1'
-              newvalue: Enterprise
-            - value: '2'
-              newvalue: Compliance
-        - uuid: '670eff7db54c4ae99225cb47c49d214e'
-          name: 'QNAP mSATA SMART'
-          mappings:
-            - value: '-1'
-              newvalue: Error
-            - value: '0'
-              newvalue: Good
-            - value: '1'
-              newvalue: Warning
-            - value: '2'
-              newvalue: Abnormal
-        - uuid: 'f09bc3ce96ca4ea2bd83ff590f650c7d'
-          name: 'QNAP JBOD Disk Status'
-          mappings:
-            - value: '-9'
-              newvalue: 'RW Error'
-            - value: '-6'
-              newvalue: Invalid
-            - value: '-5'
-              newvalue: 'No disk'
-            - value: '-4'
-              newvalue: Unknown
-            - value: '0'
-              newvalue: Ready
-      items:
-        # ---------------------------------------------------------------
-        # SISTEMA
-        # ---------------------------------------------------------------
-        - uuid: '35a32f03be264b898fc1e38fef83b58d'
-          name: 'System: Uptime'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.2.1.1.3.0'
-          key: system.uptime
-          delay: 1m
-          history: 7d
-          trends: 365d
-          units: uptime
-          description: 'Tiempo transcurrido desde el último reinicio (MIB-II sysUpTime, en centésimas de segundo).'
-          preprocessing:
-            - type: MULTIPLIER
-              parameters:
-                - '0.01'
-          tags:
-            - tag: component
-              value: system
-          triggers:
-            - uuid: '063b6e6ad25d46ca982d742ab5586aa7'
-              name: 'SNMP: No response from host'
-              expression: 'nodata(/QNAP QTS hero by SNMP/system.uptime,{$SNMP.TIMEOUT})=1'
-              priority: DISASTER
-              description: 'El host no responde a peticiones SNMP durante {$SNMP.TIMEOUT}. El NAS puede estar apagado, la red caída o SNMP deshabilitado.'
-              manual_close: 'YES'
-              tags:
-                - tag: component
-                  value: health
-            - uuid: '3d1f856f6ba64c879769bb9d548882ed'
-              name: 'System: Device has been restarted (uptime < 10m)'
-              expression: 'last(/QNAP QTS hero by SNMP/system.uptime)<10m'
-              priority: WARNING
-              description: 'El sistema se ha reiniciado recientemente (uptime inferior a 10 minutos). Revisar si fue planificado.'
-              manual_close: 'YES'
-              tags:
-                - tag: component
-                  value: system
-        - uuid: '39470e24f4b14ef5a2c4f2b02823aa84'
-          name: 'System: Model'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.3.0'
-          key: system.model
-          delay: 1h
-          history: 7d
-          trends: '0'
-          value_type: CHAR
-          description: 'Modelo del dispositivo QNAP (ej. TS-873AeU-RP).'
-          tags:
-            - tag: component
-              value: system
-        - uuid: '2bb0e0edd21145c1a48ec25bb56752e8'
-          name: 'System: Hostname'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.4.0'
-          key: system.name
-          delay: 1h
-          history: 7d
-          trends: '0'
-          value_type: CHAR
-          description: 'Nombre del dispositivo configurado en QTS hero.'
-          tags:
-            - tag: component
-              value: system
-        - uuid: 'd24be2cad58c40d4a8166bdf41b12f1e'
-          name: 'System: Serial number'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.5.0'
-          key: system.serial
-          delay: 1h
-          history: 7d
-          trends: '0'
-          value_type: CHAR
-          description: 'Número de serie del dispositivo QNAP.'
-          tags:
-            - tag: component
-              value: system
-        - uuid: '0e30b47246674d72ab58a3051b977db4'
-          name: 'System: Firmware version'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.6.0'
-          key: system.firmware.version
-          delay: 1h
-          history: 7d
-          trends: '0'
-          value_type: CHAR
-          description: 'Versión del firmware QuTS hero instalado.'
-          tags:
-            - tag: component
-              value: system
-        - uuid: '72a6773f825f4623a052adb967eaaa5f'
-          name: 'System: Firmware update available'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.7.0'
-          key: system.firmware.update
-          delay: 6h
-          history: 7d
-          trends: 365d
-          value_type: UNSIGNED
-          description: '0 = al día; 1 = actualización disponible.'
-          valuemap:
-            name: 'QNAP Firmware Update'
-          tags:
-            - tag: component
-              value: system
-          triggers:
-            - uuid: '138f0988da694bb2a35db7ca2d182805'
-              name: 'System: Firmware update available'
-              expression: 'last(/QNAP QTS hero by SNMP/system.firmware.update)=1'
-              priority: INFO
-              description: 'Hay una actualización de firmware disponible para el dispositivo QNAP. Planificar actualización en ventana de mantenimiento.'
-              manual_close: 'YES'
-              tags:
-                - tag: component
-                  value: system
-        - uuid: '6aa9cc9dcea9462ea4aa05a77a4ae354'
-          name: 'CPU: Temperature'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.10.0'
-          key: cpu.temperature
-          delay: 3m
-          history: 7d
-          trends: 365d
-          units: "\xB0C"
-          description: 'Temperatura del procesador en grados Celsius.'
-          tags:
-            - tag: component
-              value: cpu
-          triggers:
-            - uuid: '0ff7eaff88304078bab7f5722ec55619'
-              name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}'
-              priority: HIGH
-              description: 'La temperatura del CPU supera {$CPU_TEMP_HIGH}°C de forma sostenida durante 15 minutos. Riesgo de throttling o fallo del hardware.'
-              tags:
-                - tag: component
-                  value: cpu
-            - uuid: 'aca5eea09cde4a26ac48bf2e9d105f31'
-              name: 'CPU: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_WARN}'
-              priority: WARNING
-              description: 'La temperatura del CPU supera el umbral de advertencia {$CPU_TEMP_WARN}°C durante 15 minutos.'
-              dependencies:
-                - name: 'CPU: Temperature is too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-                  expression: 'avg(/QNAP QTS hero by SNMP/cpu.temperature,15m)>{$CPU_TEMP_HIGH}'
-              tags:
-                - tag: component
-                  value: cpu
-        - uuid: 'dada6963370849c3b670ac6b74c3dfd7'
-          name: 'System: Temperature'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.11.0'
-          key: system.temperature
-          delay: 3m
-          history: 7d
-          trends: 365d
-          units: "\xB0C"
-          description: 'Temperatura general del sistema/chasis en grados Celsius.'
-          tags:
-            - tag: component
-              value: system
-          triggers:
-            - uuid: 'e6d6d60de1c245cbb12ffd93b6836987'
-              name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}'
-              priority: HIGH
-              description: 'La temperatura del chasis/sistema supera {$CPU_TEMP_HIGH}°C de forma sostenida. Revisar ventilación del armario.'
-              tags:
-                - tag: component
-                  value: system
-            - uuid: '0c7513cc064e4e60a6cb1ddd6f93dc36'
-              name: 'System: Temperature warning (>{$CPU_TEMP_WARN}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_WARN}'
-              priority: WARNING
-              description: 'La temperatura del chasis/sistema supera el umbral de advertencia {$CPU_TEMP_WARN}°C durante 15 minutos.'
-              dependencies:
-                - name: 'System: Temperature too high (>{$CPU_TEMP_HIGH}°C for 15m)'
-                  expression: 'avg(/QNAP QTS hero by SNMP/system.temperature,15m)>{$CPU_TEMP_HIGH}'
-              tags:
-                - tag: component
-                  value: system
-        - uuid: '55ef5cdcdb5b4799b1b57b5a55a5c9e1'
-          name: 'CPU: Utilization'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.12.0'
-          key: system.cpu.util
-          delay: 1m
-          history: 7d
-          trends: 365d
-          units: '%'
-          description: 'Porcentaje de uso total de CPU (agregado de todos los núcleos).'
-          tags:
-            - tag: component
-              value: cpu
-        - uuid: 'a4f11b2aa6e946ed855bc6e0513f2853'
-          name: 'Memory: Total'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.13.0'
-          key: vm.memory.total
-          delay: 1h
-          history: 7d
-          trends: 365d
-          units: B
-          description: 'Memoria RAM total instalada. La MIB devuelve el valor en MB; se convierte a bytes con x1048576.'
-          preprocessing:
-            - type: MULTIPLIER
-              parameters:
-                - '1048576'
-          tags:
-            - tag: component
-              value: memory
-        - uuid: 'f84fa526e0b848bcbe89f479a688a29e'
-          name: 'Memory: Used'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.16.0'
-          key: vm.memory.used
-          delay: 1m
-          history: 7d
-          trends: 365d
-          units: B
-          description: 'Memoria RAM en uso. La MIB devuelve el valor en MB; se convierte a bytes con x1048576.'
-          preprocessing:
-            - type: MULTIPLIER
-              parameters:
-                - '1048576'
-          tags:
-            - tag: component
-              value: memory
-        - uuid: '25298b17429640f185be373b3932a643'
-          name: 'Memory: Utilization'
-          type: CALCULATED
-          key: vm.memory.util
-          delay: 1m
-          history: 7d
-          trends: 365d
-          units: '%'
-          params: 'last(/QNAP QTS hero by SNMP/vm.memory.used)/last(/QNAP QTS hero by SNMP/vm.memory.total)*100'
-          description: 'Porcentaje de memoria RAM utilizada (calculado a partir de Used/Total).'
-          tags:
-            - tag: component
-              value: memory
-          triggers:
-            - uuid: '5fa1c761dd0c45b9bcc115e42019ffe1'
-              name: 'Memory: High utilization (>90% for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/vm.memory.util,15m)>90'
-              priority: WARNING
-              description: 'La utilización de memoria RAM del NAS supera el 90% durante 15 minutos. Puede afectar al rendimiento de los servicios.'
-              tags:
-                - tag: component
-                  value: memory
-        - uuid: '780c6427f26441e19b6bcc4f87f7a1da'
-          name: 'System: Power status'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.19.0'
-          key: system.power.status
-          delay: 1m
-          history: 7d
-          trends: 365d
-          value_type: UNSIGNED
-          description: '0=OK, -1=Fallo. Monitoriza el estado del sistema de alimentación.'
-          valuemap:
-            name: 'QNAP Power Status'
-          tags:
-            - tag: component
-              value: power
-          triggers:
-            - uuid: '2d6982571b544d75bc90590a89b2e61c'
-              name: 'System: Power failure detected'
-              expression: 'last(/QNAP QTS hero by SNMP/system.power.status)=-1'
-              priority: HIGH
-              description: 'El estado de alimentación del sistema indica fallo. Revisar la fuente de alimentación y el cableado.'
-              tags:
-                - tag: component
-                  value: power
-        - uuid: 'd658c63d80ee4884941d69eb46fc43b7'
-          name: 'System: UPS status code'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.12.20.0'
-          key: system.ups.status.code
-          delay: 1m
-          history: 7d
-          trends: 365d
-          description: 'Código de estado del UPS según el sistema QTS hero.'
-          tags:
-            - tag: component
-              value: ups
-        # ---------------------------------------------------------------
-        # UPS EXTERNO
-        # ---------------------------------------------------------------
-        - uuid: '9684edca083247f9bc6fccbe8d3edf16'
-          name: 'UPS: Status'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.13.1.0'
-          key: ups.status
-          delay: 1m
-          history: 7d
-          trends: '0'
-          value_type: CHAR
-          description: 'Descripción textual del estado del UPS conectado al NAS.'
-          tags:
-            - tag: component
-              value: ups
-        - uuid: '5791355428ae4ecc8402d180b4b30fd9'
-          name: 'UPS: Battery charge'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.13.7.0'
-          key: ups.battery.charge
-          delay: 1m
-          history: 7d
-          trends: 365d
-          units: '%'
-          description: 'Porcentaje de carga de la batería del UPS externo.'
-          tags:
-            - tag: component
-              value: ups
-          triggers:
-            - uuid: '8e746026b8854662af5dacba4a6dada5'
-              name: 'UPS: Battery charge low (<{$UPS_BATT_WARN}%)'
-              expression: 'last(/QNAP QTS hero by SNMP/ups.battery.charge)<{$UPS_BATT_WARN} and last(/QNAP QTS hero by SNMP/ups.battery.charge)>0'
-              priority: WARNING
-              description: 'La batería del UPS está por debajo del umbral de advertencia {$UPS_BATT_WARN}%. En caso de corte eléctrico, el tiempo de autonomía es insuficiente.'
-              tags:
-                - tag: component
-                  value: ups
-        - uuid: '2b7d45b759c3457791adf8d25572ce62'
-          name: 'UPS: Load'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.13.6.0'
-          key: ups.load.percent
-          delay: 1m
-          history: 7d
-          trends: 365d
-          units: '%'
-          description: 'Porcentaje de carga del UPS externo.'
-          tags:
-            - tag: component
-              value: ups
-        # ---------------------------------------------------------------
-        # CACHÉ mSATA
-        # ---------------------------------------------------------------
-        - uuid: 'db1a78b9e9f64c15be5be55b186458d7'
-          name: 'Cache: Available'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.11.0'
-          key: cache.available.percent
-          delay: 5m
-          history: 7d
-          trends: 365d
-          units: '%'
-          description: 'Porcentaje de caché mSATA disponible.'
-          tags:
-            - tag: component
-              value: cache
-        - uuid: 'b3d92bfb11274eea92ace1d16359acd8'
-          name: 'Cache: Read hit rate'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.12.0'
-          key: cache.read.hit.rate
-          delay: 5m
-          history: 7d
-          trends: 365d
-          units: '%'
-          description: 'Tasa de acierto de lectura de la caché mSATA.'
-          tags:
-            - tag: component
-              value: cache
-        - uuid: '765deca08fae438eb473399a20dc979b'
-          name: 'Cache: Write hit rate'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.13.0'
-          key: cache.write.hit.rate
-          delay: 5m
-          history: 7d
-          trends: 365d
-          units: '%'
-          description: 'Tasa de acierto de escritura de la caché mSATA.'
-          tags:
-            - tag: component
-              value: cache
-        - uuid: '0e9fcb2b3c864028b434596de1423365'
-          name: 'Cache: Type'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.15.0'
-          key: cache.type
-          delay: 1h
-          history: 7d
-          trends: 365d
-          value_type: UNSIGNED
-          description: 'Tipo de caché mSATA configurado: 0=Read-only, 1=Read-write, 2=Write-only.'
-          valuemap:
-            name: 'QNAP Cache Type'
-          tags:
-            - tag: component
-              value: cache
-        - uuid: 'ded7d6f003db407094428a636b4c330e'
-          name: 'Cache: RAID type'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.16.0'
-          key: cache.raid.type
-          delay: 1h
-          history: 7d
-          trends: '0'
-          value_type: CHAR
-          description: 'Tipo de RAID del conjunto de caché mSATA (ej. RAID 1, Single).'
-          tags:
-            - tag: component
-              value: cache
-        - uuid: 'cdbb24584f38407cbca746a55840c455'
-          name: 'Cache: Mode'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.17.0'
-          key: cache.mode
-          delay: 1h
-          history: 7d
-          trends: '0'
-          value_type: CHAR
-          description: 'Modo de operación de la caché (Read, Write, Read-write).'
-          tags:
-            - tag: component
-              value: cache
-        # ---------------------------------------------------------------
-        # CONTADORES DE ALMACENAMIENTO
-        # ---------------------------------------------------------------
-        - uuid: '64ad12dc58cd4d05979ad61921db987a'
-          name: 'Storage: Disk count'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.1.0'
-          key: storage.disk.count
-          delay: 15m
-          history: 7d
-          trends: 365d
-          description: 'Número total de discos físicos detectados por QTS hero.'
-          tags:
-            - tag: component
-              value: storage
-        - uuid: 'd7f3716b5e9a46d4915709b26b61dae3'
-          name: 'Storage: RAID count'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.4.0'
-          key: storage.raid.count
-          delay: 15m
-          history: 7d
-          trends: 365d
-          description: 'Número de conjuntos RAID configurados.'
-          tags:
-            - tag: component
-              value: storage
-        - uuid: '6ac99417881f496db56d9552d4005ca1'
-          name: 'Storage: Pool count'
-          type: SNMP_AGENT
-          snmp_oid: '1.3.6.1.4.1.55062.2.10.6.0'
-          key: storage.pool.count
-          delay: 15m
-          history: 7d
-          trends: 365d
-          description: 'Número de pools de almacenamiento ZFS configurados.'
-          tags:
-            - tag: component
-              value: storage
-      discovery_rules:
-        # ---------------------------------------------------------------
-        # LLD 1: DISCOS FÍSICOS
-        # diskTable: 1.3.6.1.4.1.55062.2.10.2
-        # ---------------------------------------------------------------
-        - uuid: '4ff03fa05ce3438b937396dd3d02a0df'
-          name: 'Disk Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#DISKINDEX},1.3.6.1.4.1.55062.2.10.2.1.1,{#DISKID},1.3.6.1.4.1.55062.2.10.2.1.2,{#DISKMANUFACTURER},1.3.6.1.4.1.55062.2.10.2.1.3,{#DISKMODEL},1.3.6.1.4.1.55062.2.10.2.1.4,{#DISKSERIALNUMBER},1.3.6.1.4.1.55062.2.10.2.1.5]'
-          key: disk.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de discos físicos via diskTable (OID .55062.2.10.2). Columnas: index, id, manufacturer, model, serial.'
-          item_prototypes:
-            - uuid: '0a7b5659dbb04c10b55c5f54e4f4ceaf'
-              name: 'Disk [{#DISKMODEL}]: SMART status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.2.1.7.{#SNMPINDEX}'
-              key: 'disk.smart.status[{#SNMPINDEX}]'
-              delay: 5m
-              history: 7d
-              trends: 365d
-              value_type: UNSIGNED
-              description: 'Estado SMART del disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}). Fabricante: {#DISKMANUFACTURER}.'
-              valuemap:
-                name: 'QNAP SMART Status'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'd57185ae1d9a4377ae3de9006fc250d6'
-              name: 'Disk [{#DISKMODEL}]: Temperature'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.2.1.8.{#SNMPINDEX}'
-              key: 'disk.temperature[{#SNMPINDEX}]'
-              delay: 3m
-              history: 7d
-              trends: 365d
-              units: "\xB0C"
-              description: 'Temperatura del disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) en grados Celsius.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '5818108a7c9b4f83b5b93c5c99dbb6cf'
-              name: 'Disk [{#DISKMODEL}]: Capacity'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.2.1.9.{#SNMPINDEX}'
-              key: 'disk.capacity[{#SNMPINDEX}]'
-              delay: 1h
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Capacidad del disco {#DISKMODEL}. La MIB devuelve el valor en MB; se multiplica por 1048576 para obtener bytes.'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: storage
-          trigger_prototypes:
-            - uuid: '9562b7ce184a469197cc38d7bdae35bd'
-              name: 'Disk [{#DISKMODEL}]: SMART error detected (S/N: {#DISKSERIALNUMBER})'
-              expression: 'last(/QNAP QTS hero by SNMP/disk.smart.status[{#SNMPINDEX}])=-1'
-              priority: DISASTER
-              description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) reporta un error SMART crítico. Se recomienda reemplazarlo inmediatamente para evitar pérdida de datos.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '520f0fcbee3a477baa19461c5c046a23'
-              name: 'Disk [{#DISKMODEL}]: SMART status is Warning or Abnormal'
-              expression: 'last(/QNAP QTS hero by SNMP/disk.smart.status[{#SNMPINDEX}])=1 or last(/QNAP QTS hero by SNMP/disk.smart.status[{#SNMPINDEX}])=2'
-              priority: HIGH
-              description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) presenta un estado SMART anómalo. Planificar reemplazo preventivo.'
-              dependencies:
-                - name: 'Disk [{#DISKMODEL}]: SMART error detected (S/N: {#DISKSERIALNUMBER})'
-                  expression: 'last(/QNAP QTS hero by SNMP/disk.smart.status[{#SNMPINDEX}])=-1'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '323cf03b21724f8da8ea6df7ad809da3'
-              name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}'
-              priority: HIGH
-              description: 'La temperatura del disco {#DISKMODEL} ha superado {$HDD_TEMP_HIGH}°C durante 15 minutos. Riesgo de fallo por sobrecalentamiento.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '2c5031b36bb9476591b1bb84440d9096'
-              name: 'Disk [{#DISKMODEL}]: Temperature warning (>{$HDD_TEMP_WARN}°C for 15m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_WARN}'
-              priority: WARNING
-              description: 'La temperatura del disco {#DISKMODEL} supera el umbral de advertencia {$HDD_TEMP_WARN}°C durante 15 minutos.'
-              dependencies:
-                - name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}°C for 15m)'
-                  expression: 'avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}'
-              tags:
-                - tag: component
-                  value: storage
-        # ---------------------------------------------------------------
-        # LLD 2: VENTILADORES
-        # sysFanTable: 1.3.6.1.4.1.55062.2.12.9
-        # ---------------------------------------------------------------
-        - uuid: '2f5de8069a31487f952fdd79719cee4e'
-          name: 'Fan Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#SYSFANINDEX},1.3.6.1.4.1.55062.2.12.9.1.1,{#SYSFANDESCR},1.3.6.1.4.1.55062.2.12.9.1.2]'
-          key: fan.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de ventiladores del sistema via sysFanTable (OID .55062.2.12.9).'
-          item_prototypes:
-            - uuid: 'd40b9d3f1c1747edafe39e95dea6346c'
-              name: 'Fan [{#SYSFANDESCR}]: Speed'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.12.9.1.3.{#SNMPINDEX}'
-              key: 'fan.speed[{#SNMPINDEX}]'
-              delay: 3m
-              history: 7d
-              trends: 365d
-              units: rpm
-              description: 'Velocidad de rotación del ventilador {#SYSFANDESCR} en RPM.'
-              tags:
-                - tag: component
-                  value: hardware
-          trigger_prototypes:
-            - uuid: '9f42b621086b4608840adb333ee7fb7c'
-              name: 'Fan [{#SYSFANDESCR}]: Fan has stopped (0 RPM)'
-              expression: 'min(/QNAP QTS hero by SNMP/fan.speed[{#SNMPINDEX}],3m)=0'
-              priority: HIGH
-              description: 'El ventilador {#SYSFANDESCR} lleva 3 minutos a 0 RPM. Puede causar sobrecalentamiento crítico del sistema.'
-              tags:
-                - tag: component
-                  value: hardware
-        # ---------------------------------------------------------------
-        # LLD 3: CONJUNTOS RAID
-        # raidTable: 1.3.6.1.4.1.55062.2.10.5
-        # ---------------------------------------------------------------
-        - uuid: 'af065456140b4cd3904586b9f6535602'
-          name: 'RAID Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#RAIDINDEX},1.3.6.1.4.1.55062.2.10.5.1.1,{#RAIDID},1.3.6.1.4.1.55062.2.10.5.1.2,{#RAIDNAME},1.3.6.1.4.1.55062.2.10.5.1.3]'
-          key: raid.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de conjuntos RAID via raidTable (OID .55062.2.10.5).'
-          item_prototypes:
-            - uuid: '349dc7dd20c2450ab645c17199cfb656'
-              name: 'RAID [{#RAIDNAME}]: Status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.5.1.4.{#SNMPINDEX}'
-              key: 'raid.status[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: '0'
-              value_type: CHAR
-              description: 'Estado del conjunto RAID {#RAIDNAME}. El valor numérico se traduce a texto mediante JavaScript.'
-              preprocessing:
-                - type: JAVASCRIPT
-                  parameters:
-                    - |
-                      var v = parseInt(value);
-                      if (!isNaN(v)) {
-                          var states = {
-                              "-1": "Single",
-                              "0": "Ready",
-                              "1": "Initializing",
-                              "2": "Degraded",
-                              "3": "Dead",
-                              "4": "Rebuilding",
-                              "5": "Synchronizing",
-                              "6": "Parity checking"
-                          };
-                          return states[String(v)] !== undefined ? states[String(v)] : "Unknown (" + v + ")";
-                      }
-                      return value;
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '0fdadf6fea2644f1b6119af4f5186f31'
-              name: 'RAID [{#RAIDNAME}]: Capacity'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.5.1.5.{#SNMPINDEX}'
-              key: 'raid.capacity[{#SNMPINDEX}]'
-              delay: 1h
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Capacidad total del RAID {#RAIDNAME} (MB→bytes con x1048576).'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'c17ca56a235c4cf79d43c81e733a93e4'
-              name: 'RAID [{#RAIDNAME}]: Level'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.5.1.7.{#SNMPINDEX}'
-              key: 'raid.level[{#SNMPINDEX}]'
-              delay: 1h
-              history: 7d
-              trends: '0'
-              value_type: CHAR
-              description: 'Nivel RAID del conjunto {#RAIDNAME} (ej. RAID 5, RAID 6, JBOD).'
-              tags:
-                - tag: component
-                  value: storage
-          trigger_prototypes:
-            - uuid: '5f83b8bd94c842b9b83890911a7df212'
-              name: 'RAID [{#RAIDNAME}]: Degraded or failed'
-              expression: 'find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Degraded")=1 or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Dead")=1'
-              priority: DISASTER
-              description: 'El RAID {#RAIDNAME} está degradado o ha fallado por completo. Revisión inmediata requerida para evitar pérdida de datos.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'acdbad3a241a49b29517364bdb507e8f'
-              name: 'RAID [{#RAIDNAME}]: Rebuilding or synchronizing'
-              expression: 'find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Rebuilding")=1 or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Synchronizing")=1'
-              priority: WARNING
-              manual_close: 'YES'
-              description: 'El RAID {#RAIDNAME} está en proceso de reconstrucción o sincronización. Rendimiento degradado hasta completar el proceso.'
-              tags:
-                - tag: component
-                  value: storage
-        # ---------------------------------------------------------------
-        # LLD 4: POOLS DE ALMACENAMIENTO ZFS
-        # storagepoolTable: 1.3.6.1.4.1.55062.2.10.7
-        # ---------------------------------------------------------------
-        - uuid: '56d0d39887794d65a891c58dbdab9441'
-          name: 'Storage Pool Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#STORAGEPOOLINDEX},1.3.6.1.4.1.55062.2.10.7.1.1,{#STORAGEPOOLID},1.3.6.1.4.1.55062.2.10.7.1.2]'
-          key: storagepool.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de pools de almacenamiento ZFS via storagepoolTable (OID .55062.2.10.7).'
-          item_prototypes:
-            - uuid: '1ca875e0c1ba4fceb851dcc05122f3d3'
-              name: 'Pool [{#STORAGEPOOLINDEX}]: Status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.7.1.5.{#SNMPINDEX}'
-              key: 'storagepool.status[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: 365d
-              value_type: UNSIGNED
-              description: 'Estado del pool de almacenamiento {#STORAGEPOOLINDEX}. Ver value map QNAP Storage Pool Status.'
-              valuemap:
-                name: 'QNAP Storage Pool Status'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '466172544fa742739ceacf54b85065f4'
-              name: 'Pool [{#STORAGEPOOLINDEX}]: Capacity'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.7.1.3.{#SNMPINDEX}'
-              key: 'storagepool.capacity[{#SNMPINDEX}]'
-              delay: 15m
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Capacidad total del pool {#STORAGEPOOLINDEX} (MB→bytes con x1048576).'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'f5ffd7540dae4422a159fcd65751b922'
-              name: 'Pool [{#STORAGEPOOLINDEX}]: Free space'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.7.1.4.{#SNMPINDEX}'
-              key: 'storagepool.free[{#SNMPINDEX}]'
-              delay: 15m
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Espacio libre en el pool {#STORAGEPOOLINDEX} (MB→bytes con x1048576).'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'e182e9a02b7e4a94a7091aae46b881f4'
-              name: 'Pool [{#STORAGEPOOLINDEX}]: Free space (%)'
-              type: CALCULATED
-              key: 'storagepool.free.pct[{#SNMPINDEX}]'
-              delay: 15m
-              history: 7d
-              trends: 365d
-              units: '%'
-              params: 'last(/QNAP QTS hero by SNMP/storagepool.free[{#SNMPINDEX}])/last(/QNAP QTS hero by SNMP/storagepool.capacity[{#SNMPINDEX}])*100'
-              description: 'Porcentaje de espacio libre en el pool {#STORAGEPOOLINDEX}.'
-              tags:
-                - tag: component
-                  value: storage
-          trigger_prototypes:
-            - uuid: 'a3d927f0a0cd47ed972700b3c3da0d72'
-              name: 'Pool [{#STORAGEPOOLINDEX}]: Status is not Ready'
-              expression: 'last(/QNAP QTS hero by SNMP/storagepool.status[{#SNMPINDEX}])<>0'
-              priority: HIGH
-              description: 'El pool de almacenamiento {#STORAGEPOOLINDEX} no está en estado Ready. Estado actual indicado en el valor del ítem.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '36e309d6869a4212a53e5e7440451663'
-              name: 'Pool [{#STORAGEPOOLINDEX}]: Free space critical (<{$POOL_FREE_CRIT}%)'
-              expression: 'last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_CRIT}'
-              priority: AVERAGE
-              description: 'El espacio libre en el pool {#STORAGEPOOLINDEX} ha caído por debajo del umbral crítico {$POOL_FREE_CRIT}%.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'ccb40b629d174dcdb7dcaaf62bdd848c'
-              name: 'Pool [{#STORAGEPOOLINDEX}]: Free space low (<{$POOL_FREE_WARN}%)'
-              expression: 'last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_WARN}'
-              priority: WARNING
-              description: 'El espacio libre en el pool {#STORAGEPOOLINDEX} ha caído por debajo del umbral de advertencia {$POOL_FREE_WARN}%.'
-              dependencies:
-                - name: 'Pool [{#STORAGEPOOLINDEX}]: Free space critical (<{$POOL_FREE_CRIT}%)'
-                  expression: 'last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_CRIT}'
-              tags:
-                - tag: component
-                  value: storage
-        # ---------------------------------------------------------------
-        # LLD 5: VOLÚMENES / CARPETAS COMPARTIDAS
-        # sharedFolderTable: 1.3.6.1.4.1.55062.2.10.9
-        # ---------------------------------------------------------------
-        - uuid: '875ee18fbd5744dd93b00d6e541807c1'
-          name: 'Volume (Shared Folder) Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#SHAREDFOLDERNAME},1.3.6.1.4.1.55062.2.10.9.1.2,{#SHAREDFOLDERSTATUS},1.3.6.1.4.1.55062.2.10.9.1.5]'
-          key: volume.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de volúmenes/carpetas compartidas via sharedFolderTable (OID .55062.2.10.9). Equivale al Volume Discovery del template base.'
-          item_prototypes:
-            - uuid: '8ef22da40ba04b2d9bc5155acdc2f37d'
-              name: 'Volume [{#SHAREDFOLDERNAME}]: Status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.9.1.5.{#SNMPINDEX}'
-              key: 'volume.status[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: '0'
-              value_type: CHAR
-              description: 'Estado del volumen/carpeta compartida {#SHAREDFOLDERNAME}.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'd1e1efdd220b41869b2918d683e2a2c5'
-              name: 'Volume [{#SHAREDFOLDERNAME}]: Capacity'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.9.1.3.{#SNMPINDEX}'
-              key: 'volume.capacity[{#SNMPINDEX}]'
-              delay: 15m
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Capacidad total del volumen {#SHAREDFOLDERNAME} (MB→bytes con x1048576).'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '0834cdae30e846e1abe9b007f4814731'
-              name: 'Volume [{#SHAREDFOLDERNAME}]: Free space'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.9.1.4.{#SNMPINDEX}'
-              key: 'volume.free[{#SNMPINDEX}]'
-              delay: 15m
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Espacio libre en el volumen {#SHAREDFOLDERNAME} (MB→bytes con x1048576).'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '815f6bd6e7c049a18322ba87b56dde74'
-              name: 'Volume [{#SHAREDFOLDERNAME}]: Free space (%)'
-              type: CALCULATED
-              key: 'volume.free.pct[{#SNMPINDEX}]'
-              delay: 15m
-              history: 7d
-              trends: 365d
-              units: '%'
-              params: 'last(/QNAP QTS hero by SNMP/volume.free[{#SNMPINDEX}])/last(/QNAP QTS hero by SNMP/volume.capacity[{#SNMPINDEX}])*100'
-              description: 'Porcentaje de espacio libre en el volumen {#SHAREDFOLDERNAME}.'
-              tags:
-                - tag: component
-                  value: storage
-          trigger_prototypes:
-            - uuid: '8cf3b000ea2347bdbce9bf770446f150'
-              name: 'Volume [{#SHAREDFOLDERNAME}]: Status is not Ready'
-              expression: 'find(/QNAP QTS hero by SNMP/volume.status[{#SNMPINDEX}],,"like","Ready")=0'
-              priority: DISASTER
-              description: 'El volumen {#SHAREDFOLDERNAME} no está en estado Ready. Pueden producirse errores de acceso a los datos.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: '5dd73bdfa7034d48b432b20ee8d6676e'
-              name: 'Volume [{#SHAREDFOLDERNAME}]: Free space critical (<{$VOL_FREE_CRIT}%)'
-              expression: 'last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_CRIT}'
-              priority: AVERAGE
-              description: 'El espacio libre en el volumen {#SHAREDFOLDERNAME} ha caído por debajo del umbral crítico {$VOL_FREE_CRIT}%.'
-              tags:
-                - tag: component
-                  value: storage
-            - uuid: 'dc721af579dd4bc190360d480be15c75'
-              name: 'Volume [{#SHAREDFOLDERNAME}]: Free space low (<{$VOL_FREE_WARN}%)'
-              expression: 'last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_WARN}'
-              priority: WARNING
-              description: 'El espacio libre en el volumen {#SHAREDFOLDERNAME} ha caído por debajo del umbral de advertencia {$VOL_FREE_WARN}%.'
-              dependencies:
-                - name: 'Volume [{#SHAREDFOLDERNAME}]: Free space critical (<{$VOL_FREE_CRIT}%)'
-                  expression: 'last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_CRIT}'
-              tags:
-                - tag: component
-                  value: storage
-        # ---------------------------------------------------------------
-        # LLD 6: LUNS iSCSI
-        # lunTable: 1.3.6.1.4.1.55062.2.10.20
-        # ---------------------------------------------------------------
-        - uuid: '22588b788ca24441b554c9ee66873eb5'
-          name: 'iSCSI LUN Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#LUNINDEX},1.3.6.1.4.1.55062.2.10.20.1.1,{#LUNNAME},1.3.6.1.4.1.55062.2.10.20.1.6]'
-          key: lun.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de LUNs iSCSI via lunTable (OID .55062.2.10.20).'
-          item_prototypes:
-            - uuid: '26debcd584f04c028a48a6ffa6883e5c'
-              name: 'LUN [{#LUNNAME}]: Status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.20.1.5.{#SNMPINDEX}'
-              key: 'lun.status[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: '0'
-              value_type: CHAR
-              description: 'Estado textual del LUN {#LUNNAME}.'
-              tags:
-                - tag: component
-                  value: iscsi
-            - uuid: '1901fe5cd248482c8c865bcef345b37a'
-              name: 'LUN [{#LUNNAME}]: Capacity'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.20.1.3.{#SNMPINDEX}'
-              key: 'lun.capacity[{#SNMPINDEX}]'
-              delay: 1h
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Capacidad del LUN {#LUNNAME} (MB→bytes con x1048576).'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: iscsi
-            - uuid: '980ef3051ba44c6980a4329ab1912464'
-              name: 'LUN [{#LUNNAME}]: Mapped status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.20.1.8.{#SNMPINDEX}'
-              key: 'lun.mapped[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: 365d
-              value_type: UNSIGNED
-              description: 'Estado de mapeo del LUN {#LUNNAME}: -1=Offline, 0=Disconnected, 1=Connected.'
-              valuemap:
-                name: 'QNAP LUN Status'
-              tags:
-                - tag: component
-                  value: iscsi
-          trigger_prototypes:
-            - uuid: '1af971823ffa49ceafbbe307653f9419'
-              name: 'LUN [{#LUNNAME}]: Status is not Enabled/Ready'
-              expression: 'find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Enabled")=0 and find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Ready")=0'
-              priority: HIGH
-              description: 'El LUN {#LUNNAME} no está habilitado ni en estado ready. Revisar la configuración iSCSI.'
-              tags:
-                - tag: component
-                  value: iscsi
-        # ---------------------------------------------------------------
-        # LLD 7: TARGETS iSCSI
-        # targetTable: 1.3.6.1.4.1.55062.2.10.22
-        # ---------------------------------------------------------------
-        - uuid: 'd4c93d0be1ab46fe9c2d77c5d9f7f8dd'
-          name: 'iSCSI Target Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#TARGETINDEX},1.3.6.1.4.1.55062.2.10.22.1.1,{#TARGETNAME},1.3.6.1.4.1.55062.2.10.22.1.3,{#TARGETIQN},1.3.6.1.4.1.55062.2.10.22.1.4]'
-          key: iscsi.target.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de targets iSCSI via targetTable (OID .55062.2.10.22).'
-          item_prototypes:
-            - uuid: '4f47cd257f504710a80156ff02bf0aff'
-              name: 'iSCSI Target [{#TARGETNAME}]: Status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.22.1.6.{#SNMPINDEX}'
-              key: 'iscsi.target.status[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: 365d
-              value_type: UNSIGNED
-              description: 'Estado del target iSCSI {#TARGETNAME} (IQN: {#TARGETIQN}): -1=Offline, 0=Ready, 1=Connected.'
-              valuemap:
-                name: 'QNAP Target Status'
-              tags:
-                - tag: component
-                  value: iscsi
-          trigger_prototypes:
-            - uuid: '283f6dd3dc044aeca6400136da4d4bd1'
-              name: 'iSCSI Target [{#TARGETNAME}]: Offline'
-              expression: 'last(/QNAP QTS hero by SNMP/iscsi.target.status[{#SNMPINDEX}])=-1'
-              priority: HIGH
-              description: 'El target iSCSI {#TARGETNAME} (IQN: {#TARGETIQN}) está offline. Los iniciadores no pueden conectarse.'
-              tags:
-                - tag: component
-                  value: iscsi
-        # ---------------------------------------------------------------
-        # LLD 8: INTERFACES DE RED (IF-MIB estándar)
-        # ifTable: 1.3.6.1.2.1.2.2 / ifXTable: 1.3.6.1.2.1.31.1.1
-        # ---------------------------------------------------------------
-        - uuid: '8d3502d5a37643e7a5f28422e86dea07'
-          name: 'Network Interface Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#IFINDEX},1.3.6.1.2.1.2.2.1.1,{#IFNAME},1.3.6.1.2.1.2.2.1.2,{#IFALIAS},1.3.6.1.2.1.31.1.1.1.18,{#IFTYPE},1.3.6.1.2.1.2.2.1.3]'
-          key: net.if.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de interfaces de red via IF-MIB estándar (RFC 2863). Usa ifHCInOctets/ifHCOutOctets (64-bit) para precisión en interfaces de alta velocidad.'
-          filter:
-            evaltype: AND
-            conditions:
-              - macro: '{#IFNAME}'
-                value: '{$NET_IF_MATCHES}'
-                formulaid: A
-              - macro: '{#IFNAME}'
-                value: '{$NET_IF_NOT_MATCHES}'
-                operator: NOT_MATCHES_REGEX
-                formulaid: B
-          item_prototypes:
-            - uuid: '3137a806132a4731b59a2fc0bc57b955'
-              name: 'Interface [{#IFNAME}]: Bits received'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.2.1.31.1.1.1.6.{#SNMPINDEX}'
-              key: 'net.if.in[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: 365d
-              units: bps
-              description: 'Tráfico de entrada en la interfaz {#IFNAME} ({#IFALIAS}) en bits/segundo (ifHCInOctets × 8).'
-              preprocessing:
-                - type: CHANGE_PER_SECOND
-                - type: MULTIPLIER
-                  parameters:
-                    - '8'
-              tags:
-                - tag: component
-                  value: network
-            - uuid: '6aa9c33914fb41019175e5976f7bd36b'
-              name: 'Interface [{#IFNAME}]: Bits sent'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.2.1.31.1.1.1.10.{#SNMPINDEX}'
-              key: 'net.if.out[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: 365d
-              units: bps
-              description: 'Tráfico de salida en la interfaz {#IFNAME} ({#IFALIAS}) en bits/segundo (ifHCOutOctets × 8).'
-              preprocessing:
-                - type: CHANGE_PER_SECOND
-                - type: MULTIPLIER
-                  parameters:
-                    - '8'
-              tags:
-                - tag: component
-                  value: network
-            - uuid: 'e1776e40d94543889a8057e6c997b553'
-              name: 'Interface [{#IFNAME}]: Operational status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.2.1.2.2.1.8.{#SNMPINDEX}'
-              key: 'net.if.status[{#SNMPINDEX}]'
-              delay: 1m
-              history: 7d
-              trends: 365d
-              description: 'Estado operativo de la interfaz {#IFNAME}: 1=up, 2=down, 3=testing, 4=unknown, 5=dormant, 6=notPresent, 7=lowerLayerDown.'
-              tags:
-                - tag: component
-                  value: network
-          trigger_prototypes:
-            - uuid: '892bc19fea614f558c790b59f9f1b2a6'
-              name: 'Interface [{#IFNAME}]: Link down'
-              expression: 'last(/QNAP QTS hero by SNMP/net.if.status[{#SNMPINDEX}])=2'
-              priority: AVERAGE
-              description: 'La interfaz de red {#IFNAME} ({#IFALIAS}) está caída (ifOperStatus=2/down).'
-              tags:
-                - tag: component
-                  value: network
-        # ---------------------------------------------------------------
-        # LLD 9: RECINTOS DE EXPANSIÓN (NUEVO en QTS hero)
-        # enclosureTable: 1.3.6.1.4.1.55062.2.10.34
-        # ---------------------------------------------------------------
-        - uuid: '833124981f2b42ba8ef382d65ec75778'
-          name: 'Enclosure Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#ENCLOSUREINDEX},1.3.6.1.4.1.55062.2.10.34.1.1,{#ENCLOSUREMODEL},1.3.6.1.4.1.55062.2.10.34.1.3,{#ENCLOSURENAME},1.3.6.1.4.1.55062.2.10.34.1.6]'
-          key: enclosure.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de recintos de expansión QNAP via enclosureTable (OID .55062.2.10.34). Este LLD no existe en el template base Zabbix 6.x (nuevo en QTS hero MIB).'
-          item_prototypes:
-            - uuid: 'dda4b07f848a4eb1abc1a8a853fd1b62'
-              name: 'Enclosure [{#ENCLOSURENAME}]: Temperature'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.34.1.7.{#SNMPINDEX}'
-              key: 'enclosure.temperature[{#SNMPINDEX}]'
-              delay: 3m
-              history: 7d
-              trends: 365d
-              units: "\xB0C"
-              description: 'Temperatura del recinto de expansión {#ENCLOSURENAME} (modelo: {#ENCLOSUREMODEL}) en grados Celsius.'
-              tags:
-                - tag: component
-                  value: hardware
-          trigger_prototypes:
-            - uuid: 'f4f62392629243e3a94389b1a9d452ee'
-              name: 'Enclosure [{#ENCLOSURENAME}]: Temperature too high (>45°C for 10m)'
-              expression: 'avg(/QNAP QTS hero by SNMP/enclosure.temperature[{#SNMPINDEX}],10m)>45'
-              priority: WARNING
-              description: 'La temperatura del recinto de expansión {#ENCLOSURENAME} supera 45°C durante 10 minutos. Verificar ventilación.'
-              tags:
-                - tag: component
-                  value: hardware
-        # ---------------------------------------------------------------
-        # LLD 10: DISCOS mSATA DE CACHÉ (NUEVO en QTS hero)
-        # mSATAdiskTable: 1.3.6.1.4.1.55062.2.10.32
-        # ---------------------------------------------------------------
-        - uuid: 'c93afd9d877542998d309ec267deaa56'
-          name: 'mSATA Cache Disk Discovery'
-          type: SNMP_AGENT
-          snmp_oid: 'discovery[{#MSATAINDEX},1.3.6.1.4.1.55062.2.10.32.1.1,{#MSATADISKMODEL},1.3.6.1.4.1.55062.2.10.32.1.8]'
-          key: msata.disk.discovery
-          delay: 1h
-          lifetime: 3d
-          description: 'Descubrimiento de discos mSATA de caché via mSATAdiskTable (OID .55062.2.10.32). Este LLD no existe en el template base Zabbix 6.x (nuevo en QTS hero MIB).'
-          item_prototypes:
-            - uuid: '81c0bc4f3d9b407287655fa2e9143ab8'
-              name: 'mSATA [{#MSATADISKMODEL}]: SMART status'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.32.1.5.{#SNMPINDEX}'
-              key: 'msata.smart.status[{#SNMPINDEX}]'
-              delay: 5m
-              history: 7d
-              trends: 365d
-              value_type: UNSIGNED
-              description: 'Estado SMART del disco mSATA de caché {#MSATADISKMODEL}.'
-              valuemap:
-                name: 'QNAP mSATA SMART'
-              tags:
-                - tag: component
-                  value: cache
-            - uuid: '89286ade7e834f8da61e9300aa339372'
-              name: 'mSATA [{#MSATADISKMODEL}]: Temperature'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.32.1.6.{#SNMPINDEX}'
-              key: 'msata.temperature[{#SNMPINDEX}]'
-              delay: 3m
-              history: 7d
-              trends: 365d
-              units: "\xB0C"
-              description: 'Temperatura del disco mSATA de caché {#MSATADISKMODEL} en grados Celsius.'
-              tags:
-                - tag: component
-                  value: cache
-            - uuid: 'f027c988a13e4e4ba670b4c0d8cc8a0a'
-              name: 'mSATA [{#MSATADISKMODEL}]: Capacity'
-              type: SNMP_AGENT
-              snmp_oid: '1.3.6.1.4.1.55062.2.10.32.1.9.{#SNMPINDEX}'
-              key: 'msata.capacity[{#SNMPINDEX}]'
-              delay: 1h
-              history: 7d
-              trends: 365d
-              units: B
-              description: 'Capacidad del disco mSATA de caché {#MSATADISKMODEL} (MB→bytes con x1048576).'
-              preprocessing:
-                - type: MULTIPLIER
-                  parameters:
-                    - '1048576'
-              tags:
-                - tag: component
-                  value: cache
-          trigger_prototypes:
-            - uuid: 'a55aa09f92854daf9283cd95d64b4126'
-              name: 'mSATA [{#MSATADISKMODEL}]: SMART error'
-              expression: 'last(/QNAP QTS hero by SNMP/msata.smart.status[{#SNMPINDEX}])=-1'
-              priority: HIGH
-              description: 'El disco mSATA de caché {#MSATADISKMODEL} reporta error SMART. La caché puede quedar inoperativa.'
-              tags:
-                - tag: component
-                  value: cache
+      - uuid: cd5918ee1468499790e65585efaaeebc
+        name: 'Disk [{#DISKMODEL}]: Temperature'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.8.{#SNMPINDEX}
+        key: disk.temperature[{#SNMPINDEX}]
+        delay: 3m
+        history: 7d
+        trends: 365d
+        units: C
+        description: Temperatura del disco {#DISKMODEL} (Integer32, grados Celsius).
+        tags:
+        - tag: component
+          value: storage
+      - uuid: f9ac69e3716c4da7b11a48c1a92d6be0
+        name: 'Disk [{#DISKMODEL}]: Capacity'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.2.1.9.{#SNMPINDEX}
+        key: disk.capacity[{#SNMPINDEX}]
+        delay: 1h
+        history: 7d
+        trends: 365d
+        units: B
+        description: Capacidad del disco {#DISKMODEL} (Counter64, bytes segun MIB).
+        tags:
+        - tag: component
+          value: storage
+      trigger_prototypes:
+      - uuid: 7650dcfbfd3f4883bab73ae2f95c4c6b
+        name: 'Disk [{#DISKMODEL}]: Status is not Ready (S/N: {#DISKSERIALNUMBER})'
+        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^Ready$")=0
+          and length(last(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}]))>0
+        priority: HIGH
+        description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) no esta en
+          estado Ready.'
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 29593dc2556d4376b3491e04c479b41a
+        name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C for
+          15m)'
+        expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}
+        priority: HIGH
+        description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_HIGH}C durante
+          15m.
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 79508c6bc09f4696ba28387afef60fcb
+        name: 'Disk [{#DISKMODEL}]: Temperature warning (>{$HDD_TEMP_WARN}C for 15m)'
+        expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_WARN}
+        priority: WARNING
+        description: Temperatura del disco {#DISKMODEL} supera {$HDD_TEMP_WARN}C durante
+          15m.
+        dependencies:
+        - name: 'Disk [{#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C
+            for 15m)'
+          expression: avg(/QNAP QTS hero by SNMP/disk.temperature[{#SNMPINDEX}],15m)>{$HDD_TEMP_HIGH}
+        tags:
+        - tag: component
+          value: storage
+    - uuid: 9969025bda3347db9152c15b68540cc6
+      name: Fan Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#SYSFANDESCR},1.3.6.1.4.1.55062.2.12.9.1.2]
+      key: fan.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Ventiladores via sysFanTable (.55062.2.12.9). Camina sysFanDescr
+        (col2, accesible).
+      item_prototypes:
+      - uuid: 4237aaa3d89f4512baa4541905d97e68
+        name: 'Fan [{#SYSFANDESCR}]: Speed'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.12.9.1.3.{#SNMPINDEX}
+        key: fan.speed[{#SNMPINDEX}]
+        delay: 3m
+        history: 7d
+        trends: 365d
+        units: rpm
+        description: Velocidad del ventilador {#SYSFANDESCR} en RPM.
+        tags:
+        - tag: component
+          value: hardware
+      trigger_prototypes:
+      - uuid: c7661791a6764d23bd7ce56b5b1a81fd
+        name: 'Fan [{#SYSFANDESCR}]: Fan has stopped (0 RPM)'
+        expression: min(/QNAP QTS hero by SNMP/fan.speed[{#SNMPINDEX}],3m)=0
+        priority: HIGH
+        description: El ventilador {#SYSFANDESCR} lleva 3 minutos parado.
+        tags:
+        - tag: component
+          value: hardware
+    - uuid: 9c402bb7e5124ef382dfea6af6af0517
+      name: RAID Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#RAIDNAME},1.3.6.1.4.1.55062.2.10.5.1.3]
+      key: raid.discovery
+      delay: 1h
+      lifetime: 3d
+      description: RAIDs via raidTable (.55062.2.10.5). Camina raidName (col3).
+      item_prototypes:
+      - uuid: 0bfdebbe4fe74794b194e547a7682a75
+        name: 'RAID [{#RAIDNAME}]: Status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.5.1.4.{#SNMPINDEX}
+        key: raid.status[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: '0'
+        value_type: CHAR
+        description: Estado del RAID {#RAIDNAME}. Valor numerico traducido a texto
+          via JavaScript.
+        preprocessing:
+        - type: JAVASCRIPT
+          parameters:
+          - var s={"\"-1\"":"Single",\"0\":\"Ready\",\"1\":\"Initializing\",\"2\":\"Degraded\",\"3\":\"Dead\",\"4\":\"Rebuilding\",\"5\":\"Synchronizing\",\"6\":\"Parity
+            checking\"}; var k=String(parseInt(value)); return s[k]||("Unknown("+value+")");
+        tags:
+        - tag: component
+          value: storage
+      - uuid: a660894d16274841b14e97466c7837fa
+        name: 'RAID [{#RAIDNAME}]: Capacity'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.5.1.5.{#SNMPINDEX}
+        key: raid.capacity[{#SNMPINDEX}]
+        delay: 1h
+        history: 7d
+        trends: 365d
+        units: B
+        description: Capacidad total del RAID {#RAIDNAME} (Counter64, bytes).
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 4d1e501ff12d4bc8ba934f040502cea8
+        name: 'RAID [{#RAIDNAME}]: Level'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.5.1.7.{#SNMPINDEX}
+        key: raid.level[{#SNMPINDEX}]
+        delay: 1h
+        history: 7d
+        trends: '0'
+        value_type: CHAR
+        description: Nivel RAID (ej. RAID 5, RAID 6).
+        tags:
+        - tag: component
+          value: storage
+      trigger_prototypes:
+      - uuid: 70675e5077024d8493359ab3c0c2e486
+        name: 'RAID [{#RAIDNAME}]: Degraded or failed'
+        expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Degraded")=1
+          or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Dead")=1
+        priority: DISASTER
+        description: RAID {#RAIDNAME} degradado o fallido.
+        tags:
+        - tag: component
+          value: storage
+      - uuid: b8b46995b9de4d1b844830cfa720cc78
+        name: 'RAID [{#RAIDNAME}]: Rebuilding or synchronizing'
+        expression: find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Rebuilding")=1
+          or find(/QNAP QTS hero by SNMP/raid.status[{#SNMPINDEX}],,"like","Synchronizing")=1
+        priority: WARNING
+        manual_close: 'YES'
+        description: RAID {#RAIDNAME} en reconstruccion o sincronizacion.
+        tags:
+        - tag: component
+          value: storage
+    - uuid: 46a3ddbde3d944a896674f02a94f89f2
+      name: Storage Pool Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#STORAGEPOOLID},1.3.6.1.4.1.55062.2.10.7.1.2]
+      key: storagepool.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Pools ZFS via storagepoolTable (.55062.2.10.7). Camina storagepoolID
+        (col2). Capacidades en bytes (Counter64).
+      item_prototypes:
+      - uuid: 2f3acadb58b74391a78257ceff4e764e
+        name: 'Pool [{#SNMPINDEX}]: Status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.7.1.5.{#SNMPINDEX}
+        key: storagepool.status[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: 365d
+        value_type: UNSIGNED
+        description: Estado del pool {#SNMPINDEX}. Ver value map QNAP Storage Pool
+          Status.
+        valuemap:
+          name: QNAP Storage Pool Status
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 81ea4fca00cd426b9fa9518340a1e713
+        name: 'Pool [{#SNMPINDEX}]: Capacity'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.7.1.3.{#SNMPINDEX}
+        key: storagepool.capacity[{#SNMPINDEX}]
+        delay: 15m
+        history: 7d
+        trends: 365d
+        units: B
+        description: Capacidad total del pool (Counter64, bytes).
+        tags:
+        - tag: component
+          value: storage
+      - uuid: d4781f22e1c44d3e993512e648ab1186
+        name: 'Pool [{#SNMPINDEX}]: Free space'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.7.1.4.{#SNMPINDEX}
+        key: storagepool.free[{#SNMPINDEX}]
+        delay: 15m
+        history: 7d
+        trends: 365d
+        units: B
+        description: Espacio libre en el pool (Counter64, bytes).
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 3356aaeea17144d88c3e668d168b12ad
+        name: 'Pool [{#SNMPINDEX}]: Free space (%)'
+        type: CALCULATED
+        key: storagepool.free.pct[{#SNMPINDEX}]
+        delay: 15m
+        history: 7d
+        trends: 365d
+        units: '%'
+        params: last(/QNAP QTS hero by SNMP/storagepool.free[{#SNMPINDEX}])/last(/QNAP
+          QTS hero by SNMP/storagepool.capacity[{#SNMPINDEX}])*100
+        description: '% libre en el pool.'
+        tags:
+        - tag: component
+          value: storage
+      trigger_prototypes:
+      - uuid: 13c346703518417bb85ea32777700740
+        name: 'Pool [{#SNMPINDEX}]: Status is not Ready'
+        expression: last(/QNAP QTS hero by SNMP/storagepool.status[{#SNMPINDEX}])<>0
+        priority: HIGH
+        description: Pool no esta en estado Ready.
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 1b324075b3de40909275b0733c9dc90b
+        name: 'Pool [{#SNMPINDEX}]: Free space critical (<{$POOL_FREE_CRIT}%)'
+        expression: last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_CRIT}
+        priority: AVERAGE
+        description: Espacio libre critico en pool.
+        tags:
+        - tag: component
+          value: storage
+      - uuid: ad79ff4bc54a4bbc9474844bfe346ba2
+        name: 'Pool [{#SNMPINDEX}]: Free space low (<{$POOL_FREE_WARN}%)'
+        expression: last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_WARN}
+        priority: WARNING
+        description: Espacio libre bajo en pool.
+        dependencies:
+        - name: 'Pool [{#SNMPINDEX}]: Free space critical (<{$POOL_FREE_CRIT}%)'
+          expression: last(/QNAP QTS hero by SNMP/storagepool.free.pct[{#SNMPINDEX}])<{$POOL_FREE_CRIT}
+        tags:
+        - tag: component
+          value: storage
+    - uuid: a1c065456fad4710851609261d46d318
+      name: Volume (Shared Folder) Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#SHAREDFOLDERNAME},1.3.6.1.4.1.55062.2.10.9.1.2]
+      key: volume.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Volumenes/carpetas compartidas via sharedFolderTable (.55062.2.10.9).
+        Capacidades en bytes (Counter64).
+      item_prototypes:
+      - uuid: dc9d60d419e54f1eb5cbf6b3272a91ab
+        name: 'Volume [{#SHAREDFOLDERNAME}]: Status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.9.1.5.{#SNMPINDEX}
+        key: volume.status[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: '0'
+        value_type: CHAR
+        description: Estado del volumen {#SHAREDFOLDERNAME}.
+        tags:
+        - tag: component
+          value: storage
+      - uuid: be192ca2e24d42f3b19f9de3535cd8b9
+        name: 'Volume [{#SHAREDFOLDERNAME}]: Capacity'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.9.1.3.{#SNMPINDEX}
+        key: volume.capacity[{#SNMPINDEX}]
+        delay: 15m
+        history: 7d
+        trends: 365d
+        units: B
+        description: Capacidad del volumen (Counter64, bytes).
+        tags:
+        - tag: component
+          value: storage
+      - uuid: e2f67bc30d0b4583acc0100a80a48ff6
+        name: 'Volume [{#SHAREDFOLDERNAME}]: Free space'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.9.1.4.{#SNMPINDEX}
+        key: volume.free[{#SNMPINDEX}]
+        delay: 15m
+        history: 7d
+        trends: 365d
+        units: B
+        description: Espacio libre en el volumen (Counter64, bytes).
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 0c15d75f04ac453eb69fe7e89eba3ae4
+        name: 'Volume [{#SHAREDFOLDERNAME}]: Free space (%)'
+        type: CALCULATED
+        key: volume.free.pct[{#SNMPINDEX}]
+        delay: 15m
+        history: 7d
+        trends: 365d
+        units: '%'
+        params: last(/QNAP QTS hero by SNMP/volume.free[{#SNMPINDEX}])/last(/QNAP
+          QTS hero by SNMP/volume.capacity[{#SNMPINDEX}])*100
+        description: '% libre en el volumen.'
+        tags:
+        - tag: component
+          value: storage
+      trigger_prototypes:
+      - uuid: 7fa458ff1e454e3581d5e6e7dbfa8cf3
+        name: 'Volume [{#SHAREDFOLDERNAME}]: Status is not Ready'
+        expression: find(/QNAP QTS hero by SNMP/volume.status[{#SNMPINDEX}],,"like","Ready")=0
+        priority: DISASTER
+        description: Volumen {#SHAREDFOLDERNAME} no esta en estado Ready.
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 36ec74628f4546cfb287cfa3d944b1e8
+        name: 'Volume [{#SHAREDFOLDERNAME}]: Free space critical (<{$VOL_FREE_CRIT}%)'
+        expression: last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_CRIT}
+        priority: AVERAGE
+        description: Espacio libre critico en volumen.
+        tags:
+        - tag: component
+          value: storage
+      - uuid: 6f494c90ff404d1cb0220e2d01a49b5c
+        name: 'Volume [{#SHAREDFOLDERNAME}]: Free space low (<{$VOL_FREE_WARN}%)'
+        expression: last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_WARN}
+        priority: WARNING
+        description: Espacio libre bajo en volumen.
+        dependencies:
+        - name: 'Volume [{#SHAREDFOLDERNAME}]: Free space critical (<{$VOL_FREE_CRIT}%)'
+          expression: last(/QNAP QTS hero by SNMP/volume.free.pct[{#SNMPINDEX}])<{$VOL_FREE_CRIT}
+        tags:
+        - tag: component
+          value: storage
+    - uuid: 7412c3ddc7564f2399a3733eb6f9ecd0
+      name: iSCSI LUN Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#LUNNAME},1.3.6.1.4.1.55062.2.10.20.1.6]
+      key: lun.discovery
+      delay: 1h
+      lifetime: 3d
+      description: LUNs iSCSI via lunTable (.55062.2.10.20). Camina lunName (col6).
+      item_prototypes:
+      - uuid: 509f71083da6458aa97e179ff86b023a
+        name: 'LUN [{#LUNNAME}]: Status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.20.1.5.{#SNMPINDEX}
+        key: lun.status[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: '0'
+        value_type: CHAR
+        description: Estado del LUN {#LUNNAME}.
+        tags:
+        - tag: component
+          value: iscsi
+      - uuid: dbc87bfaf29046128b55e7412dc4dbbe
+        name: 'LUN [{#LUNNAME}]: Capacity'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.20.1.3.{#SNMPINDEX}
+        key: lun.capacity[{#SNMPINDEX}]
+        delay: 1h
+        history: 7d
+        trends: 365d
+        units: B
+        description: Capacidad del LUN {#LUNNAME} (Counter64, bytes).
+        tags:
+        - tag: component
+          value: iscsi
+      - uuid: 60da4c40e903446996a54a15b93bd2e2
+        name: 'LUN [{#LUNNAME}]: Mapped status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.20.1.8.{#SNMPINDEX}
+        key: lun.mapped[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: 365d
+        value_type: UNSIGNED
+        description: 'Estado de mapeo del LUN: -1=Offline, 0=Disconnected, 1=Connected.'
+        valuemap:
+          name: QNAP LUN Status
+        tags:
+        - tag: component
+          value: iscsi
+      trigger_prototypes:
+      - uuid: a1747f3dbe9741ed94e756f63a76734f
+        name: 'LUN [{#LUNNAME}]: Status is not Enabled/Ready'
+        expression: find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Enabled")=0
+          and find(/QNAP QTS hero by SNMP/lun.status[{#SNMPINDEX}],,"like","Ready")=0
+        priority: HIGH
+        description: LUN {#LUNNAME} no esta habilitado ni ready.
+        tags:
+        - tag: component
+          value: iscsi
+    - uuid: 338e97e3003148098b8a77d424c18d0e
+      name: iSCSI Target Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#TARGETNAME},1.3.6.1.4.1.55062.2.10.22.1.3,{#TARGETIQN},1.3.6.1.4.1.55062.2.10.22.1.4]
+      key: iscsi.target.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Targets iSCSI via targetTable (.55062.2.10.22).
+      item_prototypes:
+      - uuid: 40de3c2fc48443209312f6c182e54bae
+        name: 'iSCSI Target [{#TARGETNAME}]: Status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.22.1.6.{#SNMPINDEX}
+        key: iscsi.target.status[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: 365d
+        value_type: UNSIGNED
+        description: 'Estado del target {#TARGETNAME} (IQN: {#TARGETIQN}): -1=Offline,
+          0=Ready, 1=Connected.'
+        valuemap:
+          name: QNAP Target Status
+        tags:
+        - tag: component
+          value: iscsi
+      trigger_prototypes:
+      - uuid: d5f43daeba9b4fff99286f675b9d8ede
+        name: 'iSCSI Target [{#TARGETNAME}]: Offline'
+        expression: last(/QNAP QTS hero by SNMP/iscsi.target.status[{#SNMPINDEX}])=-1
+        priority: HIGH
+        description: Target iSCSI {#TARGETNAME} offline.
+        tags:
+        - tag: component
+          value: iscsi
+    - uuid: acf7e141f76943ffa6de7db506f2ba75
+      name: Network Interface Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#IFNAME},1.3.6.1.2.1.2.2.1.2,{#IFALIAS},1.3.6.1.2.1.31.1.1.1.18]
+      key: net.if.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Interfaces de red via IF-MIB estandar (RFC 2863). Camina ifDescr
+        e ifAlias.
+      filter:
+        evaltype: AND
+        conditions:
+        - macro: '{#IFNAME}'
+          value: '{$NET_IF_MATCHES}'
+          formulaid: A
+        - macro: '{#IFNAME}'
+          value: '{$NET_IF_NOT_MATCHES}'
+          operator: NOT_MATCHES_REGEX
+          formulaid: B
+      item_prototypes:
+      - uuid: d4bfa0053994498f883b05b54c92cb20
+        name: 'Interface [{#IFNAME}]: Bits received'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.2.1.31.1.1.1.6.{#SNMPINDEX}
+        key: net.if.in[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: 365d
+        units: bps
+        description: Trafico entrada {#IFNAME} ({#IFALIAS}) en bps (ifHCInOctets x8).
+        preprocessing:
+        - type: CHANGE_PER_SECOND
+        - type: MULTIPLIER
+          parameters:
+          - '8'
+        tags:
+        - tag: component
+          value: network
+      - uuid: de14ae3a2c0644efb3fccde9608e1f41
+        name: 'Interface [{#IFNAME}]: Bits sent'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.2.1.31.1.1.1.10.{#SNMPINDEX}
+        key: net.if.out[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: 365d
+        units: bps
+        description: Trafico salida {#IFNAME} ({#IFALIAS}) en bps (ifHCOutOctets x8).
+        preprocessing:
+        - type: CHANGE_PER_SECOND
+        - type: MULTIPLIER
+          parameters:
+          - '8'
+        tags:
+        - tag: component
+          value: network
+      - uuid: ee502baaf2fd4de18a4c23fde448bc6b
+        name: 'Interface [{#IFNAME}]: Operational status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.2.1.2.2.1.8.{#SNMPINDEX}
+        key: net.if.status[{#SNMPINDEX}]
+        delay: 1m
+        history: 7d
+        trends: 365d
+        description: 'Estado operativo: 1=up, 2=down.'
+        tags:
+        - tag: component
+          value: network
+      trigger_prototypes:
+      - uuid: c44a5de1506c4fa7a06988d213f688e3
+        name: 'Interface [{#IFNAME}]: Link down'
+        expression: last(/QNAP QTS hero by SNMP/net.if.status[{#SNMPINDEX}])=2
+        priority: AVERAGE
+        description: Interfaz {#IFNAME} ({#IFALIAS}) caida.
+        tags:
+        - tag: component
+          value: network
+    - uuid: bb2f8aa40329428f81d2bdf18509fa9a
+      name: Enclosure Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#ENCLOSURENAME},1.3.6.1.4.1.55062.2.10.34.1.6,{#ENCLOSUREMODEL},1.3.6.1.4.1.55062.2.10.34.1.3]
+      key: enclosure.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Recintos de expansion via enclosureTable (.55062.2.10.34).
+      item_prototypes:
+      - uuid: 16657ed03c14430b9a6bc347723fb656
+        name: 'Enclosure [{#ENCLOSURENAME}]: Temperature'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.34.1.7.{#SNMPINDEX}
+        key: enclosure.temperature[{#SNMPINDEX}]
+        delay: 3m
+        history: 7d
+        trends: 365d
+        units: C
+        description: Temperatura del recinto {#ENCLOSURENAME} ({#ENCLOSUREMODEL}).
+        tags:
+        - tag: component
+          value: hardware
+      trigger_prototypes:
+      - uuid: ce06f29eb19940069bda7f3026633f24
+        name: 'Enclosure [{#ENCLOSURENAME}]: Temperature too high (>45C for 10m)'
+        expression: avg(/QNAP QTS hero by SNMP/enclosure.temperature[{#SNMPINDEX}],10m)>45
+        priority: WARNING
+        description: Temperatura del recinto {#ENCLOSURENAME} supera 45C.
+        tags:
+        - tag: component
+          value: hardware
+    - uuid: 87840b3e467b422496873403a02849da
+      name: mSATA Cache Disk Discovery
+      type: SNMP_AGENT
+      snmp_oid: discovery[{#MSATADISKMODEL},1.3.6.1.4.1.55062.2.10.32.1.8]
+      key: msata.disk.discovery
+      delay: 1h
+      lifetime: 3d
+      description: Discos mSATA de cache via msataDiskTable (.55062.2.10.32).
+      item_prototypes:
+      - uuid: d09c29e1fbcb4b5a8c24828e504468be
+        name: 'mSATA [{#MSATADISKMODEL}]: SMART status'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.32.1.5.{#SNMPINDEX}
+        key: msata.smart.status[{#SNMPINDEX}]
+        delay: 5m
+        history: 7d
+        trends: 365d
+        value_type: UNSIGNED
+        description: 'SMART del disco mSATA {#MSATADISKMODEL}: -1=Error, 0=Good, 1=Warning,
+          2=Abnormal.'
+        valuemap:
+          name: QNAP mSATA SMART
+        tags:
+        - tag: component
+          value: cache
+      - uuid: 63f697f605b5458281d10207fd6ac38f
+        name: 'mSATA [{#MSATADISKMODEL}]: Temperature'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.32.1.6.{#SNMPINDEX}
+        key: msata.temperature[{#SNMPINDEX}]
+        delay: 3m
+        history: 7d
+        trends: 365d
+        units: C
+        description: Temperatura del disco mSATA {#MSATADISKMODEL}.
+        tags:
+        - tag: component
+          value: cache
+      - uuid: 75cff626d3734962ace39eab7c0ad45f
+        name: 'mSATA [{#MSATADISKMODEL}]: Capacity'
+        type: SNMP_AGENT
+        snmp_oid: 1.3.6.1.4.1.55062.2.10.32.1.9.{#SNMPINDEX}
+        key: msata.capacity[{#SNMPINDEX}]
+        delay: 1h
+        history: 7d
+        trends: 365d
+        units: B
+        description: Capacidad del disco mSATA {#MSATADISKMODEL} (Counter64, bytes).
+        tags:
+        - tag: component
+          value: cache
+      trigger_prototypes:
+      - uuid: a0f47316ad5f463fbc977b67d6539993
+        name: 'mSATA [{#MSATADISKMODEL}]: SMART error'
+        expression: last(/QNAP QTS hero by SNMP/msata.smart.status[{#SNMPINDEX}])=-1
+        priority: HIGH
+        description: Disco mSATA {#MSATADISKMODEL} reporta error SMART.
+        tags:
+        - tag: component
+          value: cache
