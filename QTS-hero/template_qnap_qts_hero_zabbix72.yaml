@@ -567,7 +567,7 @@ zabbix_export:
         trends: '0'
         value_type: CHAR
         description: 'Estado del disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}). diskStatus
-          OCTET STRING: Ready, Warning, Error, No disk, etc.'
+          OCTET STRING: Ready, Good, Standby, Warning, Error, No disk, etc.'
         tags:
         - tag: component
           value: storage
@@ -641,13 +641,13 @@ zabbix_export:
         - tag: component
           value: storage
       - uuid: 7650dcfbfd3f4883bab73ae2f95c4c6b
-        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Status is not Ready (S/N:
+        name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Status is abnormal (S/N:
           {#DISKSERIALNUMBER})'
-        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^(Ready|Standby)$")=0
+        expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","^(Ready|Good|Standby)$")=0
           and length(last(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}]))>0
         priority: AVERAGE
         description: 'El disco {#DISKMODEL} (S/N: {#DISKSERIALNUMBER}) no esta en
-          estado Ready.'
+          estado operacional normal (Ready, Good o Standby).'
         tags:
         - tag: component
           value: storage
