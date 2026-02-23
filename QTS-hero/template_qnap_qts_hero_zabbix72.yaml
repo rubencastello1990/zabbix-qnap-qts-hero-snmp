@@ -373,7 +373,7 @@ zabbix_export:
       type: SNMP_AGENT
       snmp_oid: 1.3.6.1.4.1.55062.2.12.13.0
       key: vm.memory.total
-      delay: 1h
+      delay: 3m
       history: 7d
       trends: 365d
       units: B
@@ -843,7 +843,7 @@ zabbix_export:
         name: 'Pool [{#SNMPINDEX}]: Free space (%)'
         type: CALCULATED
         key: storagepool.free.pct[{#SNMPINDEX}]
-        delay: 15m
+        delay: 16m
         history: 7d
         trends: 365d
         units: '%'
