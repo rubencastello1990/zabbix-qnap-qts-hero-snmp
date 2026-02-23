@@ -651,13 +651,6 @@ zabbix_export:
         tags:
         - tag: component
           value: storage
-        dependencies:
-        - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Critical state - Error (S/N:
-            {#DISKSERIALNUMBER})'
-          expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Error")=1
-        - name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Faulty/Warning state (S/N:
-            {#DISKSERIALNUMBER})'
-          expression: find(/QNAP QTS hero by SNMP/disk.status[{#SNMPINDEX}],,"regexp","Warning|Faulty")=1
       - uuid: 29593dc2556d4376b3491e04c479b41a
         name: 'Disk [Slot {#SNMPINDEX} - {#DISKMODEL}]: Temperature is too high (>{$HDD_TEMP_HIGH}C
           for 15m)'
