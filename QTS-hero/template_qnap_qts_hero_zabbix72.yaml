@@ -164,6 +164,26 @@ zabbix_export:
       - value: '2'
         newvalue: Abnormal
     items:
+    - uuid: 27a5d53427944401bffc8f38d2b0c781
+      name: 'SNMP: Availability'
+      type: INTERNAL
+      key: 'zabbix[host,snmp,available]'
+      delay: 1m
+      history: 7d
+      description: 'Disponibilidad del agente SNMP. 0=no disponible, 1=disponible, 2=desconocido. Item interno Zabbix actualizado directamente por el poller.'
+      tags:
+      - tag: component
+        value: health
+      triggers:
+      - uuid: 2932cf4f9ade48a297efa38c3ead3c21
+        name: 'SNMP: No response from host'
+        expression: max(/QNAP QTS hero by SNMP/zabbix[host,snmp,available],{$SNMP.TIMEOUT})=0
+        priority: DISASTER
+        manual_close: 'YES'
+        description: Sin respuesta SNMP durante {$SNMP.TIMEOUT}.
+        tags:
+        - tag: component
+          value: health
     - uuid: a16670219c98428f9c55d8fe2334eff2
       name: 'System: Uptime'
       type: SNMP_AGENT
@@ -183,15 +203,6 @@ zabbix_export:
       - tag: component
         value: system
       triggers:
-      - uuid: 2932cf4f9ade48a297efa38c3ead3c21
-        name: 'SNMP: No response from host'
-        expression: nodata(/QNAP QTS hero by SNMP/system.uptime,{$SNMP.TIMEOUT})=1
-        priority: DISASTER
-        manual_close: 'YES'
-        description: Sin respuesta SNMP durante {$SNMP.TIMEOUT}.
-        tags:
-        - tag: component
-          value: health
       - uuid: cc4f909bbf594961bf28f0d721937778
         name: 'System: Device has been restarted (uptime < 10m)'
         expression: last(/QNAP QTS hero by SNMP/system.uptime)<10m
